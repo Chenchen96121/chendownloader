@@ -1,0 +1,35 @@
+//! Application use cases and ports belong here once their behavior is approved.
+
+pub mod analyze_media;
+pub mod bilibili_analysis;
+pub mod bilibili_download;
+pub mod bilibili_source;
+pub mod clipboard;
+pub mod destination;
+pub mod destination_settings;
+pub mod download_activity;
+pub mod download_executor;
+pub mod download_job;
+pub mod download_queue_settings;
+pub mod instagram_analysis;
+pub mod instagram_download_job;
+pub mod instagram_video;
+pub mod live_analysis;
+pub mod local_processing;
+pub mod media_url;
+pub mod network_profile;
+pub mod output_publisher;
+pub mod output_verifier;
+pub mod portable_package;
+pub(crate) mod preview_encoding;
+pub mod preview_security;
+pub mod preview_selection;
+pub mod process;
+pub mod tool_bootstrap;
+pub mod tool_manifest;
+pub mod tool_provisioning;
+pub mod tool_resolver;
+pub mod x_analysis;
+pub mod x_download_job;
+pub mod x_source;
+pub mod x_video;

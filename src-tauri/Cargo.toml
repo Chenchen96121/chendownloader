@@ -1,0 +1,53 @@
+[package]
+name = "chendownloader"
+version = "1.0.0"
+license = "MIT"
+description = "A local-only desktop media downloader"
+edition = "2021"
+rust-version = "1.89"
+
+[lib]
+name = "local_media_downloader_lib"
+
+[features]
+default = []
+process-fixture = []
+instagram-browser-probe = []
+
+[[bin]]
+name = "process-fixture"
+path = "tests/helpers/process_fixture.rs"
+required-features = ["process-fixture"]
+
+[[bin]]
+name = "instagram-browser-probe"
+path = "src/bin/instagram-browser-probe.rs"
+required-features = ["instagram-browser-probe"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+flate2 = "=1.1.10"
+reqwest = { version = "0.12.24", default-features = false, features = ["blocking", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tempfile = "3"
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "=2.7.3"
+tauri-plugin-opener = "=2.5.5"
+url = "2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Storage_FileSystem",
+    "Win32_System_JobObjects",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Threading",
+    "Win32_System_DataExchange",
+    "Win32_System_Memory",
+    "Win32_System_Registry",
+] }

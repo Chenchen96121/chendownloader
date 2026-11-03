@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "target": "x86_64-pc-windows-msvc",
+  "tools": [
+    { "name": "yt-dlp", "version": "2026.06.09", "sha256": "EXAMPLE_ONLY_NOT_A_REAL_HASH" },
+    { "name": "deno", "version": "2.9.7", "sha256": "EXAMPLE_ONLY_NOT_A_REAL_HASH" },
+    { "name": "gallery-dl", "version": "1.32.15", "sha256": "EXAMPLE_ONLY_NOT_A_REAL_HASH" },
+    { "name": "ffmpeg", "version": "example", "sha256": "EXAMPLE_ONLY_NOT_A_REAL_HASH" },
+    { "name": "ffprobe", "version": "example", "sha256": "EXAMPLE_ONLY_NOT_A_REAL_HASH" }
+  ]
+}

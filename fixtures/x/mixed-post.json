@@ -1,0 +1,12 @@
+[
+  [2, {
+    "rest_id":"12345678901234567890",
+    "core":{"user_results":{"result":{"legacy":{"screen_name":"example"}}}},
+    "legacy":{"id_str":"12345678901234567890","full_text":"Controlled mixed X post","extended_entities":{"media":[
+      {"id_str":"10000000000000000001","media_key":"3_10000000000000000001","type":"photo","media_url_https":"https://pbs.twimg.com/media/fixtureA.jpg","original_info":{"width":1600,"height":900}},
+      {"id_str":"10000000000000000002","media_key":"7_10000000000000000002","type":"video","media_url_https":"https://pbs.twimg.com/media/fixtureB.jpg","original_info":{"width":1920,"height":1080},"video_info":{"duration_millis":12000,"variants":[{"bitrate":2000000,"content_type":"video/mp4","url":"https://video.twimg.com/ext_tw_video/fixtureB/low.mp4"},{"bitrate":8000000,"content_type":"video/mp4","url":"https://video.twimg.com/ext_tw_video/fixtureB/high.mp4"}]}},
+      {"id_str":"10000000000000000003","type":"photo","media_url_https":"https://pbs.twimg.com/media/fixtureC.png","original_info":{"width":1080,"height":1080}},
+      {"id_str":"10000000000000000004","media_key":"7_10000000000000000004","type":"animated_gif","media_url_https":"https://pbs.twimg.com/media/fixtureD.jpg","original_info":{"width":640,"height":360},"video_info":{"variants":[{"content_type":"video/mp4","url":"https://video.twimg.com/tweet_video/fixtureD.mp4"}]}}
+    ]}}
+  }]
+]

@@ -1,0 +1,4 @@
+{"id":"sample-bilibili","title":"Bilibili sample video","uploader":"Sample creator","duration":90,
+"formats":[
+{"format_id":"v1080","vbr":8000.25,"ext":"mp4","vcodec":"hev1.1.6.L120","acodec":"none","width":1920,"height":1080,"fps":60,"dynamic_range":"SDR","filesize":16777216},
+{"format_id":"a1","abr":160,"asr":48000,"audio_channels":2,"ext":"m4a","vcodec":"none","acodec":"mp4a.40.2","filesize_approx":1048576}]}

@@ -1,0 +1,6 @@
+{"id":"sample-youtube","title":"YouTube sample video","uploader":"Sample creator","duration":125,
+"formats":[
+{"format_id":"v4k","vbr":18000.5,"ext":"mp4","vcodec":"av01.0.12M.08","acodec":"none","width":3840,"height":2160,"fps":60,"dynamic_range":"HDR10","filesize":41943040},
+{"format_id":"a1","abr":192,"asr":48000,"audio_channels":2,"ext":"m4a","vcodec":"none","acodec":"mp4a.40.2","filesize_approx":2097152},
+{"format_id":"c720","vbr":5000,"abr":128,"asr":44100,"audio_channels":2,"ext":"mp4","vcodec":"avc1.64001f","acodec":"mp4a.40.2","width":1280,"height":720,"fps":30},
+{"format_id":"storyboard","ext":"mhtml","vcodec":"images","acodec":"none"}]}

@@ -1,0 +1,12 @@
+{
+  "_type": "video",
+  "id": "BV1xx411c7mD_p2",
+  "extractor_key": "BiliBili",
+  "_old_archive_ids": ["bilibili 170001_part2"],
+  "title": "Synthetic two-part video p02 Synthetic P2",
+  "duration": 90,
+  "formats": [
+    {"format_id":"100026","url":"https://fixture.bilivideo.com/video.m4s?deadline=123&sign=SYNTHETIC","ext":"mp4","protocol":"https","vcodec":"avc1.640028","acodec":"none","width":1920,"height":1080,"fps":30,"tbr":3500,"filesize":39375000,"dynamic_range":"SDR"},
+    {"format_id":"30280","url":"https://fixture.bilivideo.cn/audio.m4s?deadline=123&sign=SYNTHETIC","ext":"m4a","protocol":"https","vcodec":"none","acodec":"mp4a.40.2","tbr":192,"filesize":2160000}
+  ]
+}

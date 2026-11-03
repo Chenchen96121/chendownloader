@@ -1,0 +1,61 @@
+# JavaScript and frontend outputs
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# Rust and Tauri generated outputs
+target/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/*.schema.json
+src-tauri/schema/
+
+# Local isolated development worktrees
+.worktrees/
+
+# Local persistence and staging artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+*.part
+*.ytdl
+*.tmp-media
+.media-staging/
+staging/
+
+# Local authentication material
+cookies.txt
+*.cookies.txt
+*.cookie
+*.cookies
+
+# Environment and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+tauri.conf.json.sig
+
+# Managed executable sidecars: documentation and example manifests stay tracked.
+src-tauri/binaries/*.exe
+src-tauri/binaries/*.dll
+src-tauri/binaries/*.so
+src-tauri/binaries/*.dylib
+
+# Portable-release inputs and generated artifacts.
+vendor/managed-tools/
+.release/
+*.zip.sha256
+/chendownloader-*-windows-x64/
+
+# Generated publication materials
+*.zip
+*.tar.gz
+*.log

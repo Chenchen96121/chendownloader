@@ -1,0 +1,147 @@
+use local_media_downloader_lib::{
+    domain::{download::DownloadErrorCode, media::AnalysisErrorCode, x::XDownloadIntent},
+    ipc::commands::{
+        AnalyzeXRequest, GetXPreviewRequest, OpenXSourceRequest, StartXDownloadRequest,
+        XDownloadJobRequest,
+    },
+    runtime::AppState,
+};
+use serde_json::{json, Value};
+
+fn intent() -> XDownloadIntent {
+    XDownloadIntent {
+        item_ids: vec!["3".into()],
+        compatibility_mode: false,
+    }
+}
+
+#[test]
+fn x_runtime_obeys_readiness_and_closes_all_submission_paths() {
+    let root = tempfile::tempdir().unwrap();
+    let state = AppState::new(root.path().to_owned());
+    assert_eq!(
+        state.analyze_x("https://x.com/a/status/123").err(),
+        Some(AnalysisErrorCode::ToolMissing)
+    );
+    assert_eq!(
+        state.get_x_preview("1", "2").err(),
+        Some(AnalysisErrorCode::ToolMissing)
+    );
+    assert_eq!(
+        state.start_x_download("1", "2", intent()).err(),
+        Some(DownloadErrorCode::ToolMissing)
+    );
+    // Cancellation/result retrieval must not depend on tool readiness.
+    assert_eq!(
+        state.cancel_x_download("1"),
+        Err(DownloadErrorCode::InvalidRequest)
+    );
+    assert_eq!(
+        state.x_download_result("1").err(),
+        Some(DownloadErrorCode::InvalidRequest)
+    );
+    assert_eq!(
+        state.open_x_completed_location("1"),
+        Err(DownloadErrorCode::InvalidRequest)
+    );
+    assert!(state.open_x_source("1").is_err());
+    assert_eq!(state.download_queue().unwrap().limit, 2);
+    assert!(state.download_queue().unwrap().tasks.is_empty());
+    assert!(!root.path().join("x-download-jobs").exists());
+    state.shutdown();
+    state.shutdown();
+    assert_eq!(
+        state.start_x_download("1", "2", intent()).err(),
+        Some(DownloadErrorCode::DownloadInProgress)
+    );
+    assert_eq!(
+        state.analyze_x("https://x.com/a/status/123").err(),
+        Some(AnalysisErrorCode::AnalysisUnavailable)
+    );
+    assert_eq!(
+        state.get_x_preview("1", "2").err(),
+        Some(AnalysisErrorCode::AnalysisUnavailable)
+    );
+}
+
+#[test]
+fn x_native_requests_are_closed_and_never_accept_client_media_urls() {
+    fn check<T: serde::de::DeserializeOwned>(valid: Value) {
+        assert!(serde_json::from_value::<T>(valid.clone()).is_ok());
+        for (key, value) in [
+            ("url", json!("https://video.twimg.com/private.mp4")),
+            ("headers", json!({})),
+            ("path", json!("C:\\private")),
+            ("cookie", json!("private")),
+        ] {
+            if valid.get(key).is_some() {
+                continue;
+            }
+            let mut extra = valid.clone();
+            extra[key] = value;
+            assert!(
+                serde_json::from_value::<T>(extra).is_err(),
+                "accepted {key}"
+            );
+        }
+    }
+    check::<AnalyzeXRequest>(json!({"url":"https://x.com/a/status/123"}));
+    check::<GetXPreviewRequest>(json!({"analysisId":"1","itemId":"2"}));
+    check::<OpenXSourceRequest>(json!({"analysisId":"1"}));
+    check::<StartXDownloadRequest>(
+        json!({"analysisId":"1","destinationId":"2","intent":{"itemIds":["3"],"compatibilityMode":false}}),
+    );
+    check::<XDownloadJobRequest>(json!({"jobId":"4"}));
+    for field in ["clip", "resolution", "formatId", "videoOnly"] {
+        let mut invalid = json!({"analysisId":"1","destinationId":"2","intent":{"itemIds":["3"],"compatibilityMode":false}});
+        invalid["intent"][field] = json!(true);
+        assert!(serde_json::from_value::<StartXDownloadRequest>(invalid).is_err());
+    }
+}
+
+#[test]
+fn seven_x_commands_have_only_main_window_native_permissions() {
+    let build = include_str!("../build.rs");
+    let handler = include_str!("../src/lib.rs");
+    let commands = include_str!("../src/ipc/commands.rs");
+    let capability: Value =
+        serde_json::from_str(include_str!("../capabilities/main.json")).unwrap();
+    assert_eq!(capability["windows"], json!(["main"]));
+    let permissions = capability["permissions"].as_array().unwrap();
+    for command in [
+        "analyze_x",
+        "get_x_preview",
+        "open_x_source",
+        "start_x_download",
+        "cancel_x_download",
+        "get_x_download_result",
+        "open_x_completed_location",
+    ] {
+        assert!(
+            build.contains(&format!("\"{command}\"")),
+            "build registration: {command}"
+        );
+        assert!(
+            handler.contains(&format!("ipc::commands::{command}")),
+            "handler: {command}"
+        );
+        assert!(
+            commands.contains(&format!("fn {command}(")),
+            "native command: {command}"
+        );
+        assert!(
+            permissions.contains(&json!(format!("allow-{}", command.replace('_', "-")))),
+            "main capability: {command}"
+        );
+        let permission = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("permissions/autogenerated")
+            .join(format!("{command}.toml"));
+        let text = std::fs::read_to_string(permission).unwrap();
+        assert!(text.contains(&format!("commands.allow = [\"{command}\"]")));
+    }
+    assert!(!permissions
+        .iter()
+        .any(|p| p.as_str().is_some_and(|p| p.starts_with("shell:")
+            || p.starts_with("http:")
+            || p.starts_with("opener:"))));
+}

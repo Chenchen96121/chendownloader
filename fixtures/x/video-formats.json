@@ -1,0 +1,4 @@
+{"_type":"playlist","id":"12345678901234567890","entries":[
+ {"id":"10000000000000000004","display_id":"12345678901234567890","title":"Animated","formats":[{"format_id":"silent","url":"https://video.twimg.com/tweet_video/fixtureD.mp4","ext":"mp4","protocol":"https","vcodec":"h264","acodec":"none","width":640,"height":360,"fps":30,"vbr":800}]},
+ {"id":"10000000000000000002","display_id":"12345678901234567890","title":"Video","formats":[{"format_id":"low","url":"https://video.twimg.com/ext_tw_video/fixtureB/low.mp4","ext":"mp4","protocol":"https","vcodec":"h264","acodec":"aac","width":1280,"height":720,"fps":30,"vbr":2000,"abr":128,"audio_channels":2,"asr":48000},{"format_id":"high","url":"https://video.twimg.com/ext_tw_video/fixtureB/high.mp4","ext":"mp4","protocol":"https","vcodec":"vp9","acodec":"opus","width":1920,"height":1080,"fps":60,"vbr":8000,"abr":160,"audio_channels":2,"asr":48000,"dynamic_range":"HDR10"}]}
+]}

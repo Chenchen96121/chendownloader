@@ -1,0 +1,2 @@
+{"id":"sample-x","title":"X sample video","formats":[
+{"format_id":"combined","vbr":4500,"abr":128,"asr":44100,"audio_channels":2,"ext":"mp4","vcodec":"avc1.64001f","acodec":"mp4a.40.2","width":1280,"height":720,"fps":30}]}

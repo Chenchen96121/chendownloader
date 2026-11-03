@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-preview-media-selection-fixture"
+description = "Enables the preview_media_selection_fixture command without any pre-configured scope."
+commands.allow = ["preview_media_selection_fixture"]
+
+[[permission]]
+identifier = "deny-preview-media-selection-fixture"
+description = "Denies the preview_media_selection_fixture command without any pre-configured scope."
+commands.deny = ["preview_media_selection_fixture"]

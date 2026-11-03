@@ -1,0 +1,52 @@
+export const analysisErrorCodes = [
+  "invalid_url",
+  "unsupported_platform",
+  "unsupported_media",
+  "invalid_metadata",
+  "format_unavailable",
+  "analysis_unavailable",
+  "analysis_expired",
+  "tool_missing",
+  "tool_integrity_failed",
+  "authentication_required",
+  "access_denied",
+  "content_unavailable",
+  "content_changed",
+  "rate_limited",
+  "extractor_outdated",
+  "network_failed",
+  "analysis_timeout",
+  "process_failed",
+  "unknown",
+] as const;
+
+export type AnalysisErrorCode = (typeof analysisErrorCodes)[number];
+
+export const downloadErrorCodes = [
+  "invalid_request",
+  "analysis_unavailable",
+  "destination_unavailable",
+  "format_unavailable",
+  "download_in_progress",
+  "tool_missing",
+  "tool_integrity_failed",
+  "authentication_required",
+  "access_denied",
+  "content_unavailable",
+  "content_changed",
+  "rate_limited",
+  "extractor_outdated",
+  "network_failed",
+  "download_timeout",
+  "process_failed",
+  "output_invalid",
+  "image_content_invalid",
+  "image_dimensions_mismatch",
+  "image_size_mismatch",
+  "image_probe_failed",
+  "disk_full",
+  "publication_failed",
+  "unknown",
+] as const;
+
+export type DownloadErrorCode = (typeof downloadErrorCodes)[number];

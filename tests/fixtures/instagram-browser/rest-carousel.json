@@ -1,0 +1,32 @@
+{
+  "items": [{
+    "pk": 3599461615698204830,
+    "code": "Browser_02",
+    "user": { "username": "test_author" },
+    "caption": { "text": "REST fixture" },
+    "carousel_media_count": 2,
+    "carousel_media": [
+      {
+        "pk": 3599461615698204831,
+        "media_type": 1,
+        "image_versions2": { "candidates": [
+          { "url": "https://scontent.cdninstagram.com/1-small.jpg?signature=private", "width": 360, "height": 450 },
+          { "url": "https://scontent.cdninstagram.com/1-large.jpg?signature=private", "width": 1440, "height": 1800 }
+        ] }
+      },
+      {
+        "pk": 3599461615698204832,
+        "media_type": 2,
+        "image_versions2": { "candidates": [
+          { "url": "https://scontent.cdninstagram.com/2-cover.jpg?signature=private", "width": 1080, "height": 1920 }
+        ] },
+        "video_versions": [
+          { "url": "https://scontent.cdninstagram.com/2-medium.mp4?signature=private", "width": 1280, "height": 720 },
+          { "url": "https://scontent.cdninstagram.com/2-large.mp4?signature=private", "width": 1920, "height": 1080 },
+          { "url": "https://scontent.cdninstagram.com/2-small.mp4?signature=private", "width": 640, "height": 360 }
+        ]
+      }
+    ]
+  }],
+  "status": "ok"
+}

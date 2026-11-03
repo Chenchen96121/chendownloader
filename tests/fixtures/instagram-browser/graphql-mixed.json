@@ -1,0 +1,36 @@
+{
+  "data": {
+    "xdt_shortcode_media": {
+      "__typename": "GraphSidecar",
+      "id": "3599461615698204830",
+      "shortcode": "Browser_01",
+      "owner": { "username": "test_author" },
+      "edge_media_to_caption": { "edges": [{ "node": { "text": "Browser fixture" } }] },
+      "edge_sidecar_to_children": {
+        "count": 3,
+        "edges": [
+          { "node": {
+            "__typename": "GraphImage", "id": "101", "is_video": false,
+            "dimensions": { "width": 480, "height": 600 },
+            "display_url": "https://scontent.cdninstagram.com/thumb-1.jpg?signature=private",
+            "display_resources": [
+              { "src": "https://scontent.cdninstagram.com/1-large.jpg?signature=private", "config_width": 1080, "config_height": 1350 },
+              { "src": "https://scontent.cdninstagram.com/1-small.jpg?signature=private", "config_width": 480, "config_height": 600 }
+            ]
+          } },
+          { "node": {
+            "__typename": "GraphVideo", "id": "102", "is_video": true,
+            "dimensions": { "width": 1920, "height": 1080 },
+            "display_url": "https://scontent.cdninstagram.com/2-cover.jpg?signature=private",
+            "video_url": "https://scontent.cdninstagram.com/2.mp4?signature=private"
+          } },
+          { "node": {
+            "__typename": "GraphImage", "id": "103", "is_video": false,
+            "dimensions": { "width": 720, "height": 900 },
+            "display_url": "https://scontent.cdninstagram.com/3.webp?signature=private"
+          } }
+        ]
+      }
+    }
+  }
+}

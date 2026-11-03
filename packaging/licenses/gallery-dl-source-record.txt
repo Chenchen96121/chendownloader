@@ -1,0 +1,10 @@
+Component: gallery-dl
+Version: 1.32.15
+Upstream-Project: https://codeberg.org/mikf/gallery-dl
+Upstream-Release: https://codeberg.org/mikf/gallery-dl/releases/tag/v1.32.15
+Upstream-Source: https://files.pythonhosted.org/packages/source/g/gallery-dl/gallery_dl-1.32.15.tar.gz
+Retrieved-At: 2026-10-10T10:21:24Z
+License: GPL-2.0-only
+Modified: no
+Executable-SHA256: ${GALLERY_DL_EXECUTABLE_SHA256}
+Source-Archive-SHA256: a33192d265d8877d94fd37ac358d5e4ff6955b739b350c8a7077392d2ca4edd5

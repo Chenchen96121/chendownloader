@@ -1,0 +1,19 @@
+//! Native integrations belong here once their capabilities are explicitly approved.
+pub mod bilibili;
+pub mod clipboard;
+pub mod destination;
+pub mod ffmpeg;
+pub mod ffprobe;
+pub mod gallery_dl;
+pub mod image_verification;
+#[cfg(feature = "instagram-browser-probe")]
+pub mod instagram_browser;
+pub mod instagram_tool;
+pub mod instagram_web;
+pub mod open_location;
+pub mod output;
+pub mod process;
+pub(crate) mod system_proxy;
+pub mod tools;
+pub mod x;
+pub mod ytdlp;

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cancel-instagram-download"
+description = "Enables the cancel_instagram_download command without any pre-configured scope."
+commands.allow = ["cancel_instagram_download"]
+
+[[permission]]
+identifier = "deny-cancel-instagram-download"
+description = "Denies the cancel_instagram_download command without any pre-configured scope."
+commands.deny = ["cancel_instagram_download"]

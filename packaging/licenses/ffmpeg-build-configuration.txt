@@ -1,0 +1,26 @@
+FFmpeg and FFprobe source/build information
+==========================================
+
+Version: 9.0.2-chendownloader-d7643a0fe3
+FFmpeg source commit: d7643a0fe3f4f65516c302eba045ba884faed015
+License: GPL-3.0-or-later; individual dependency terms remain applicable.
+FFmpeg executable SHA-256: 5ba6d0b142ab2ba524e42c16f0fa1d4586fe1ee3099b743997a7f44910d5513d
+FFprobe executable SHA-256: 03b88ec9e8fd8946d0587658842c26e081dafe4a308604d991dcdf631c16fdae
+Compiler image: ghcr.io/btbn/ffmpeg-builds/win64-gpl-9.0@sha256:d178deff5325cc1f630409eee0dad9ae89c37ce1213d0b4da05f1208bc6b2a52
+Corresponding source/build archive: https://github.com/Chenchen96121/chendownloader/releases/download/1.0.0/chendownloader-ffmpeg-sources-d7643a0fe3.tar.gz
+Source archive bytes: 101173495
+Source archive SHA-256: c48e4940c50aa437dd61ff18d84ebaee841c8b7468e93ce08d000c7bd9c6645b
+
+The corresponding source attachment contains the exact FFmpeg, x264, zimg,
+dav1d, zlib and selected toolchain source archives, offline recipe, final
+configuration, zimg patch, upstream notices and GCC runtime exception.
+Build instructions are included in that attachment. Normal application use
+does not require downloading source or installing build tools.
+
+The four external media libraries are rebuilt into an isolated prefix.
+The build disables network access and optional-library autodetection.
+HTTPS uses Windows Schannel. Normal media output uses stream copy;
+only user-selected compatibility mode permits H.264/AAC conversion.
+
+Final FFmpeg configuration:
+FFMPEG_CONFIGURATION=--prefix=/work/prefix --pkg-config=pkg-config --pkg-config-flags=--static --enable-cross-compile --cross-prefix=x86_64-w64-mingw32- --arch=x86_64 --target-os=mingw32 --cc=x86_64-w64-mingw32-gcc --cxx=x86_64-w64-mingw32-g++ --ar=x86_64-w64-mingw32-gcc-ar --ranlib=x86_64-w64-mingw32-gcc-ranlib --nm=x86_64-w64-mingw32-gcc-nm --extra-cflags='-static-libgcc -static-libstdc++ -I/work/prefix/include -O2 -pipe -D_FORTIFY_SOURCE=2 -fstack-protector-strong' --extra-cxxflags='-static-libgcc -static-libstdc++ -I/work/prefix/include -O2 -pipe -D_FORTIFY_SOURCE=2 -fstack-protector-strong' --extra-ldflags='-static -static-libgcc -static-libstdc++ -L/work/prefix/lib -O2 -pipe -fstack-protector-strong -pthread' --extra-version=chendownloader-d7643a0fe3 --disable-autodetect --enable-gpl --enable-version3 --disable-debug --disable-ffplay --disable-shared --enable-static --disable-w32threads --enable-pthreads --enable-libx264 --enable-libzimg --enable-libdav1d --enable-zlib --enable-schannel

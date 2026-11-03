@@ -1,0 +1,3 @@
+{"id":"sample-instagram","title":"Instagram sample video","uploader":"Sample creator","duration":30,
+"formats":[
+{"format_id":"combined","vbr":6000,"abr":128,"asr":48000,"audio_channels":2,"ext":"mp4","vcodec":"avc1.64001f","acodec":"mp4a.40.2","width":1080,"height":1920,"fps":30,"filesize_approx":4194304}]}

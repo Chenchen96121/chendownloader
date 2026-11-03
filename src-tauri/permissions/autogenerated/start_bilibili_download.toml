@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-start-bilibili-download"
+description = "Enables the start_bilibili_download command without any pre-configured scope."
+commands.allow = ["start_bilibili_download"]
+
+[[permission]]
+identifier = "deny-start-bilibili-download"
+description = "Denies the start_bilibili_download command without any pre-configured scope."
+commands.deny = ["start_bilibili_download"]

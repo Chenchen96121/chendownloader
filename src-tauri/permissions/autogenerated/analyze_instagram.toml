@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-analyze-instagram"
+description = "Enables the analyze_instagram command without any pre-configured scope."
+commands.allow = ["analyze_instagram"]
+
+[[permission]]
+identifier = "deny-analyze-instagram"
+description = "Denies the analyze_instagram command without any pre-configured scope."
+commands.deny = ["analyze_instagram"]
