@@ -27,6 +27,17 @@ fn merge_rejects_different_post_or_unsafe_highest_candidate() {
 }
 
 #[test]
+fn supplementary_format_without_dimensions_is_retained_for_bounded_probing() {
+    let item = json!({"candidates":[{"identity":"direct","urls":["https://v16-webapp-prime.tiktok.com/original"],"width":1080,"height":1920,"fps":30,"videoCodec":"hevc","audioCodec":"aac"}]});
+    let metadata = json!({"id":"123","formats":[{"format_id":"download","format_note":"watermarked","url":"https://v16-webapp-prime.tiktok.com/download","width":null,"height":null,"vcodec":"h264","acodec":"aac","ext":"mp4"}]});
+    let merged = merge_video_candidates(&item, &metadata, "123").unwrap();
+    assert_eq!(merged["candidates"].as_array().unwrap().len(), 2);
+    assert_eq!(merged["candidates"][0]["width"], 1080);
+    assert!(merged["candidates"][1]["width"].is_null());
+    assert_eq!(merged["candidates"][1]["identity"], "download");
+}
+
+#[test]
 fn extractor_can_supply_single_video_inventory_without_a_working_web_detail_page() {
     let source = validate_media_url("https://www.tiktok.com/@public/video/123").unwrap();
     let metadata = json!({"id":"123","title":"Public video","duration":12,"formats":[{"format_id":"best","url":"https://v16-webapp-prime.tiktok.com/large","width":1080,"height":1920,"fps":30,"vcodec":"h265","acodec":"aac","ext":"mp4","filesize":2100,"tbr":1300}]});

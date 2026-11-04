@@ -150,6 +150,9 @@ export function XMediaGallery({
               </label>
             </div>
             <MediaFacts item={item} locale={locale} />
+            {preview?.status === "error" && preview.errorCode
+              ? <p className="x-item-error" role="status">{copy.xPreviewUnavailable} {copy[`analysisError.${preview.errorCode}`]}</p>
+              : null}
             {!available && item.unavailableReason
               ? <p className="x-item-error" role="status">{copy[`analysisError.${item.unavailableReason}`]}</p>
               : null}

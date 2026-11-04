@@ -139,16 +139,18 @@ pub fn merge_video_candidates(
             .and_then(Value::as_str)
             .ok_or(AnalysisErrorCode::InvalidMetadata)?;
         let url = validate_tiktok_asset_url(raw)?;
-        let width = row
-            .get("width")
-            .and_then(Value::as_u64)
-            .filter(|n| (1..=16384).contains(n))
-            .ok_or(AnalysisErrorCode::InvalidMetadata)?;
-        let height = row
-            .get("height")
-            .and_then(Value::as_u64)
-            .filter(|n| (1..=16384).contains(n))
-            .ok_or(AnalysisErrorCode::InvalidMetadata)?;
+        let dimension = |key: &str| match row.get(key) {
+            None | Some(Value::Null) => Ok(None),
+            Some(value) => value
+                .as_u64()
+                .filter(|n| (1..=16384).contains(n))
+                .map(Some)
+                .ok_or(AnalysisErrorCode::InvalidMetadata),
+        };
+        // Missing extractor facts remain unknown and are measured by the
+        // existing bounded quality probe before any candidate can be selected.
+        let width = dimension("width")?;
+        let height = dimension("height")?;
         let codec = normalized_video_codec(video).ok_or(AnalysisErrorCode::FormatUnavailable)?;
         let audio = normalized_audio_codec(row.get("acodec").and_then(Value::as_str));
         if let Some(existing) = candidates.iter_mut().find(|c| {
@@ -158,8 +160,8 @@ pub fn merge_video_candidates(
                         .and_then(|s| url::Url::parse(s).ok())
                         .is_some_and(|u| u.path() == url.path())
                 })
-            }) && c.get("width").and_then(Value::as_u64) == Some(width)
-                && c.get("height").and_then(Value::as_u64) == Some(height)
+            }) && c.get("width").and_then(Value::as_u64) == width
+                && c.get("height").and_then(Value::as_u64) == height
         }) {
             if existing.get("audioCodec").and_then(Value::as_str).is_none() {
                 if let Some(audio) = audio {

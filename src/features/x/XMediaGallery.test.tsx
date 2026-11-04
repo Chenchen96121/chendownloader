@@ -2,6 +2,14 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
 import { XMediaGallery } from "./XMediaGallery";
 import { mixedXPost } from "./xTestFixtures";
+it("shows a failed thumbnail locally with its retry action while selection remains available", () => {
+  const html=renderToStaticMarkup(<XMediaGallery locale="zh-CN" analysis={mixedXPost} selectedItemIds={["11"]}
+    previews={{"11":{status:"error",requestId:1,errorCode:"network_failed"}}} locked={false}
+    onToggle={() => {}} onRequestPreview={() => {}} onOpenSource={() => {}} />);
+  expect(html).toContain("网络连接失败。");
+  expect(html).toContain("加载预览");
+  expect(html).toContain('checked=""');
+});
 it.each(["zh-CN","en-US"] as const)("shows ordered local covers, source facts and independent availability in %s", locale => {
   const html = renderToStaticMarkup(<XMediaGallery locale={locale} analysis={mixedXPost} selectedItemIds={["11","12","13"]}
     previews={{"14":{status:"ready",requestId:1,preview:{mimeType:"image/jpeg",dataBase64:"AQID"}}}} locked={false}

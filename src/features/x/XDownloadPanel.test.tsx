@@ -7,6 +7,11 @@ function panel(state: XWorkspaceState, locale: "zh-CN"|"en-US" = "zh-CN") {
   return renderToStaticMarkup(<XDownloadPanel locale={locale} state={state} destination={{destinationId:"3",displayName:"Downloads"}} eventsReady
     onSelectAll={() => {}} onClearSelection={() => {}} onCompatibilityChange={() => {}} onOpenSettings={() => {}} onStart={() => {}} onCancel={() => {}} onOpenLocation={() => {}} />);
 }
+it("keeps a failed thumbnail from presenting the whole post as unavailable", () => {
+  const html=panel({...readyXState(),error:{scope:"preview",code:"network_failed"}});
+  expect(html).toContain("下载可用项（3/4）");
+  expect(html).not.toContain("网络连接失败。");
+});
 it("offers available items (N/M), not a falsely complete whole post", () => {
   const html=panel(readyXState());
   expect(html).toContain("下载可用项（3/4）");

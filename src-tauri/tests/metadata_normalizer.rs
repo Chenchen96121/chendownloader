@@ -574,11 +574,11 @@ fn no_usable_formats_returns_format_unavailable() {
 #[test]
 fn rejects_oversized_input_before_parsing_and_raw_list_before_filtering() {
     assert_eq!(
-        normalize_metadata(Platform::Youtube, &" ".repeat(1048577)),
+        normalize_metadata(Platform::Youtube, &" ".repeat(8 * 1024 * 1024 + 1)),
         Err(AnalysisErrorCode::InvalidMetadata)
     );
     let mut value = base();
-    value["discarded"] = json!("界".repeat(349526));
+    value["discarded"] = json!("界".repeat(8 * 1024 * 1024 / 3 + 1));
     assert_eq!(normalize(&value), Err(AnalysisErrorCode::InvalidMetadata));
     value = base();
     value["formats"] = json!(vec![Value::Null; 513]);
@@ -588,7 +588,7 @@ fn rejects_oversized_input_before_parsing_and_raw_list_before_filtering() {
         .collect::<Vec<_>>());
     assert_eq!(normalize(&value).unwrap().formats.len(), 512);
     let input = base().to_string();
-    let at_bound = format!("{input}{}", " ".repeat(1048576 - input.len()));
+    let at_bound = format!("{input}{}", " ".repeat(8 * 1024 * 1024 - input.len()));
     assert!(normalize_metadata(Platform::Youtube, &at_bound).is_ok());
 }
 

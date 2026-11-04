@@ -86,9 +86,9 @@ export function XDownloadPanel({
     && eventsReady
     && !locked;
   const status = progressMessage(state, locale);
-  const error = state.error === null
+  const error = state.error === null || state.error.scope === "preview"
     ? null
-    : state.error.scope === "analysis" || state.error.scope === "preview" || state.error.scope === "source"
+    : state.error.scope === "analysis" || state.error.scope === "source"
       ? copy[`analysisError.${state.error.code}`]
       : copy[`downloadError.${state.error.code}`];
 

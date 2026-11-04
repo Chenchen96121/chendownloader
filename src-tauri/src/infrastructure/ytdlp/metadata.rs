@@ -27,6 +27,7 @@ use crate::{
 
 use super::errors;
 
+pub(super) const MAX_METADATA_BYTES: usize = 8 * 1024 * 1024;
 const INSTAGRAM_TIMEOUT: Duration = Duration::from_secs(45);
 const INSTAGRAM_STDOUT_LIMIT: usize = 1_048_576;
 const INSTAGRAM_STDERR_LIMIT: usize = 65_536;
@@ -306,7 +307,7 @@ impl ProcessEventSink for NoopSink {
 
 /// Read bounded JSON and explicitly project only safe display/stream metadata.
 pub fn normalize_metadata(platform: Platform, json: &str) -> Result<MediaInfo, AnalysisErrorCode> {
-    if json.len() > 1_048_576 {
+    if json.len() > MAX_METADATA_BYTES {
         return Err(AnalysisErrorCode::InvalidMetadata);
     }
     let value: Value =

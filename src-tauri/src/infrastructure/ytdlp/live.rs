@@ -19,7 +19,7 @@ use crate::{
 use super::{errors, normalize_metadata};
 
 const ANALYSIS_TIMEOUT: Duration = Duration::from_secs(45);
-const STDOUT_LIMIT: usize = 1_048_576;
+const STDOUT_LIMIT: usize = super::metadata::MAX_METADATA_BYTES;
 const STDERR_LIMIT: usize = 65_536;
 
 pub struct YtDlpMetadataAnalyzer<R, P> {

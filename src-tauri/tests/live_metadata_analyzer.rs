@@ -169,11 +169,27 @@ fn invokes_verified_yt_dlp_with_only_the_fixed_safe_argument_set() {
             working_dir: PathBuf::from(r"C:\managed"),
             timeout: Some(Duration::from_secs(45)),
             inactivity_timeout: None,
-            stdout_limit: 1_048_576,
+            stdout_limit: 8 * 1024 * 1024,
             stderr_limit: 65_536,
             canceled: false,
         }
     );
+}
+
+#[test]
+fn public_video_metadata_larger_than_one_megabyte_keeps_its_formats() {
+    let mut response: serde_json::Value =
+        serde_json::from_slice(&valid_json("demoYT00001")).unwrap();
+    response["description"] = "x".repeat(1_200_000).into();
+    let resolver = FakeResolver::ready();
+    let process = FakeProcess::returning(exit(0, serde_json::to_vec(&response).unwrap(), b""));
+    let analyzer = YtDlpMetadataAnalyzer::new(&resolver, &process);
+    let media = AnalyzeMediaService::new(&analyzer).analyze(INPUT).unwrap();
+    assert_eq!(media.formats.len(), 1);
+    assert_eq!(media.formats[0].width, Some(1280));
+    assert!(!serde_json::to_string(&media)
+        .unwrap()
+        .contains("description"));
 }
 
 #[test]
@@ -224,8 +240,11 @@ fn classifies_nonzero_exit_without_returning_diagnostics() {
 
 #[test]
 fn rejects_malformed_oversized_and_wrong_identity_responses() {
+    let mut oversized: serde_json::Value =
+        serde_json::from_slice(&valid_json("demoYT00001")).unwrap();
+    oversized["description"] = "x".repeat(8 * 1024 * 1024).into();
     for stdout in [
-        vec![b' '; 1_048_577],
+        serde_json::to_vec(&oversized).unwrap(),
         vec![0xff, 0xfe],
         [valid_json("demoYT00001"), valid_json("demoYT00001")].concat(),
     ] {

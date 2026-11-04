@@ -10,6 +10,13 @@ import { createDownloadUiState } from "../downloads/downloadState";
 
 const liveSample: LiveAnalysisPreview = { analysisId: "7", ...sample };
 
+it("does not describe invalid extractor metadata as inaccessible public content", () => {
+  const state={...createLiveAnalysisState(),status:"error" as const,error:"invalid_metadata" as const};
+  const html=renderToStaticMarkup(<LiveAnalysisWorkspaceView locale="zh-CN" state={state} onChange={()=>{}} onAnalyze={()=>{}} onPreview={()=>{}} />);
+  expect(html).toContain(catalogs["zh-CN"].analysisActionRetry);
+  expect(html).not.toContain(catalogs["zh-CN"].analysisActionTryAnother);
+});
+
 it.each([["zh-CN", "一键粘贴"], ["en-US", "Paste"]] as const)("renders user-triggered paste inside the URL field in %s", (locale, label) => {
   const state = createLiveAnalysisState();
   const props = {state, locale, onChange: () => {}, onAnalyze: () => {}, onPreview: () => {}};

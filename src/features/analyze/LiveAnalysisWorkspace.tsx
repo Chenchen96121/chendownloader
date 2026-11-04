@@ -64,7 +64,7 @@ const errorActions: Record<AnalysisErrorCode, keyof Catalog> = {
   invalid_url: "analysisActionEditUrl",
   unsupported_platform: "analysisActionUseYouTube",
   unsupported_media: "analysisActionTryAnother",
-  invalid_metadata: "analysisActionTryAnother",
+  invalid_metadata: "analysisActionRetry",
   format_unavailable: "analysisActionAdjustSelection",
   analysis_unavailable: "analysisActionRetry",
   analysis_expired: "analysisActionRetry",
