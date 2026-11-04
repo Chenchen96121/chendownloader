@@ -656,6 +656,7 @@ impl Worker {
                 source: self.download.source.clone(),
                 playlist_item: None,
                 instagram_selector: None,
+                tiktok_source: None,
                 x_source: Some(source),
                 bilibili_source: None,
                 plan: plan.clone(),

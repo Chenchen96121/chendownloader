@@ -212,6 +212,7 @@ pub fn refine_video_properties<
             _ => DownloadErrorCode::ProcessFailed,
         })?;
     let exit = process.run(ProcessRequest {
+        stdin: None,
         program:ProcessProgram::from_resolved_tool(tool),
         args:vec!["-v".into(),"error".into(),"-select_streams".into(),"v:0".into(),"-read_intervals".into(),"%+#32".into(),"-show_frames".into(),"-show_entries".into(),"frame=pix_fmt,color_range,color_space,color_transfer,color_primaries,side_data_list".into(),"-of".into(),"json".into(),"--".into(),source.as_os_str().to_owned()],
         working_dir:staging.to_path_buf(),timeout:Some(std::time::Duration::from_secs(30)),inactivity_timeout:None,

@@ -74,6 +74,7 @@ where
             .process
             .run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_resolved_tool(yt_dlp),
                     args,
                     working_dir,

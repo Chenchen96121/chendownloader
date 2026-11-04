@@ -5,6 +5,7 @@ pub enum Platform {
     Bilibili,
     X,
     Instagram,
+    Tiktok,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]

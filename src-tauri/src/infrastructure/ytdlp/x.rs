@@ -123,6 +123,7 @@ impl<
                 .ok_or(AnalysisErrorCode::AnalysisTimeout)?;
             let result = self.process.run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_resolved_tool(
                         crate::application::tool_resolver::ResolvedTool {
                             name: tool.name,

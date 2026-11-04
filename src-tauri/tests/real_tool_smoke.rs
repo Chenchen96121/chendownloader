@@ -120,6 +120,7 @@ fn real_public_media_full_download_uses_production_services() {
             job_id: "1".to_owned(),
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: None,
             bilibili_source: None,
             video_source: resolved
@@ -235,6 +236,7 @@ fn real_public_media_clip_materializes_locally_and_publishes_verified_output() {
             job_id: "1".to_owned(),
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: None,
             bilibili_source: None,
             video_source: resolved
@@ -363,6 +365,7 @@ fn real_public_media_cancels_without_staging_or_published_partial_output() {
             job_id: "1".to_owned(),
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: None,
             bilibili_source: None,
             video_source: resolved

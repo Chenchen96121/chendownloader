@@ -7,5 +7,6 @@ pub mod media;
 pub mod mux_capabilities;
 pub mod output_policy;
 pub mod runtime_status;
+pub mod tiktok;
 pub mod tool_provisioning;
 pub mod x;

@@ -26,6 +26,11 @@ fn main() {
             io::stdin().read_to_end(&mut input).unwrap();
             print!("{}", input.len());
         }
+        "stdin-echo" => {
+            let mut input = Vec::new();
+            io::stdin().read_to_end(&mut input).unwrap();
+            io::stdout().write_all(&input).unwrap();
+        }
         "environment" => {
             for name in args {
                 println!("{name}={}", u8::from(env::var_os(&name).is_some()));

@@ -2,7 +2,7 @@ import { expect, it, vi } from "vitest";
 import { cancelQueueTask, openQueueTask } from "./queueActions";
 const youtube = { jobId: "10", platform: "youtube" as const, title: "A", state: "downloading" as const, percent: null, errorCode: null, displayName: null };
 it("routes cancel and completed-location actions to the exact platform and job", async () => {
-  const api = { cancelYoutube: vi.fn(), cancelInstagram: vi.fn(), cancelX:vi.fn(), openYoutube: vi.fn(), openInstagram: vi.fn(), openX:vi.fn(),cancelBilibili:vi.fn(),openBilibili:vi.fn() };
+  const api = {cancelTikTok:vi.fn(),openTikTok:vi.fn(), cancelYoutube: vi.fn(), cancelInstagram: vi.fn(), cancelX:vi.fn(), openYoutube: vi.fn(), openInstagram: vi.fn(), openX:vi.fn(),cancelBilibili:vi.fn(),openBilibili:vi.fn() };
   await cancelQueueTask(youtube, api);
   await cancelQueueTask({ ...youtube, jobId: "11", platform: "instagram" }, api);
   await cancelQueueTask({ ...youtube, jobId: "12", platform: "x" }, api);

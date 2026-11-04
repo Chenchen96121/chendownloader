@@ -6,6 +6,7 @@ pub(crate) mod destinations;
 pub(crate) mod instagram;
 pub(crate) mod jobs;
 pub mod provisioning;
+pub(crate) mod tiktok;
 pub(crate) mod x;
 
 use std::{
@@ -49,6 +50,8 @@ pub struct AppState {
     instagram_jobs: Arc<instagram::InstagramDownloadRuntime>,
     x_analysis: Arc<x::XAnalysisRuntime>,
     x_jobs: Arc<x::XDownloadRuntime>,
+    tiktok_analysis: Arc<tiktok::TikTokAnalysisRuntime>,
+    tiktok_jobs: Arc<tiktok::TikTokDownloadRuntime>,
     bilibili_analysis: Arc<bilibili::BilibiliAnalysisRuntime>,
     bilibili_jobs: Arc<bilibili::BilibiliDownloadRuntime>,
     destinations: Arc<destinations::DestinationRuntime>,
@@ -211,6 +214,71 @@ impl AppState {
         }
         self.provisioning.status().analysis_readiness()
     }
+    pub fn analyze_tiktok(
+        &self,
+        url: &str,
+    ) -> Result<crate::domain::tiktok::TikTokAnalysisPreview, AnalysisErrorCode> {
+        self.tiktok_analysis_readiness()?;
+        self.tiktok_analysis.analyze(url)
+    }
+    pub fn get_tiktok_preview(
+        &self,
+        analysis: &str,
+        item: &str,
+    ) -> Result<crate::domain::tiktok::TikTokPreviewPayload, AnalysisErrorCode> {
+        self.tiktok_analysis_readiness()?;
+        self.tiktok_analysis.load_preview(analysis, item)
+    }
+    pub fn open_tiktok_source(&self, analysis: &str) -> Result<(), AnalysisErrorCode> {
+        self.tiktok_analysis.open_source(analysis)
+    }
+    pub fn start_tiktok_download(
+        &self,
+        analysis: &str,
+        destination: &str,
+        intent: crate::domain::tiktok::TikTokDownloadIntent,
+    ) -> Result<crate::application::tiktok_download_job::StartedTikTokDownload, DownloadErrorCode>
+    {
+        if self.shutting_down.load(Ordering::Acquire) {
+            return Err(DownloadErrorCode::DownloadInProgress);
+        }
+        self.provisioning.status().download_readiness()?;
+        let _gate = self
+            .media_gate
+            .lock()
+            .map_err(|_| DownloadErrorCode::Unknown)?;
+        if self.shutting_down.load(Ordering::Acquire) {
+            return Err(DownloadErrorCode::DownloadInProgress);
+        }
+        self.provisioning.status().download_readiness()?;
+        let snapshot = self.tiktok_analysis.resolve_download(analysis, intent)?;
+        let destination = self.destinations.resolve(destination)?.into_path();
+        self.tiktok_jobs.start(snapshot, destination)
+    }
+    pub fn cancel_tiktok_download(&self, job: &str) -> Result<(), DownloadErrorCode> {
+        self.tiktok_jobs.cancel(job)
+    }
+    pub fn tiktok_download_result(
+        &self,
+        job: &str,
+    ) -> Result<crate::domain::tiktok::TikTokDownloadResult, DownloadErrorCode> {
+        self.tiktok_jobs.result(job)
+    }
+    pub fn open_tiktok_completed_location(&self, job: &str) -> Result<(), DownloadErrorCode> {
+        self.tiktok_jobs.open_completed_location(job)
+    }
+    pub(crate) fn tiktok_analysis_handle(&self) -> Arc<tiktok::TikTokAnalysisRuntime> {
+        self.tiktok_analysis.clone()
+    }
+    pub(crate) fn tiktok_analysis_readiness(&self) -> Result<(), AnalysisErrorCode> {
+        if self.shutting_down.load(Ordering::Acquire) {
+            return Err(AnalysisErrorCode::AnalysisUnavailable);
+        }
+        self.provisioning.status().analysis_readiness()?;
+        crate::infrastructure::tiktok::tool::TikTokToolResolver::from_executable()?
+            .resolve_verified()
+            .map(|_| ())
+    }
     pub fn new(app_local_data: PathBuf) -> Self {
         let queue_settings =
             DownloadQueueSettings::new(app_local_data.join("settings/download-queue.json"));
@@ -241,6 +309,14 @@ impl AppState {
             Arc::clone(&tool_store),
             Arc::clone(&download_activity),
         ));
+        let tiktok_analysis =
+            Arc::new(tiktok::TikTokAnalysisRuntime::new(tool_store.clone(), None));
+        let tiktok_jobs = Arc::new(tiktok::TikTokDownloadRuntime::new(
+            None,
+            app_local_data.clone(),
+            tool_store.clone(),
+            download_activity.clone(),
+        ));
         let x_analysis = Arc::new(x::XAnalysisRuntime::new(tool_store.clone(), None));
         let x_jobs = Arc::new(x::XDownloadRuntime::new(
             None,
@@ -265,6 +341,7 @@ impl AppState {
             live_analysis,
             (instagram_analysis, instagram_jobs),
             (x_analysis, x_jobs),
+            (tiktok_analysis, tiktok_jobs),
             (bilibili_analysis, bilibili_jobs),
             destinations,
             jobs,
@@ -307,6 +384,16 @@ impl AppState {
             Arc::clone(&tool_store),
             Arc::clone(&download_activity),
         ));
+        let tiktok_analysis = Arc::new(tiktok::TikTokAnalysisRuntime::new(
+            tool_store.clone(),
+            Some(app.clone()),
+        ));
+        let tiktok_jobs = Arc::new(tiktok::TikTokDownloadRuntime::new(
+            Some(app.clone()),
+            app_local_data.clone(),
+            tool_store.clone(),
+            download_activity.clone(),
+        ));
         let x_analysis = Arc::new(x::XAnalysisRuntime::new(
             tool_store.clone(),
             Some(app.clone()),
@@ -334,6 +421,7 @@ impl AppState {
             live_analysis,
             (instagram_analysis, instagram_jobs),
             (x_analysis, x_jobs),
+            (tiktok_analysis, tiktok_jobs),
             (bilibili_analysis, bilibili_jobs),
             destinations,
             jobs,
@@ -352,6 +440,10 @@ impl AppState {
             Arc<instagram::InstagramDownloadRuntime>,
         ),
         x: (Arc<x::XAnalysisRuntime>, Arc<x::XDownloadRuntime>),
+        tiktok: (
+            Arc<tiktok::TikTokAnalysisRuntime>,
+            Arc<tiktok::TikTokDownloadRuntime>,
+        ),
         bilibili: (
             Arc<bilibili::BilibiliAnalysisRuntime>,
             Arc<bilibili::BilibiliDownloadRuntime>,
@@ -375,6 +467,8 @@ impl AppState {
             instagram_jobs: instagram.1,
             x_analysis: x.0,
             x_jobs: x.1,
+            tiktok_analysis: tiktok.0,
+            tiktok_jobs: tiktok.1,
             bilibili_analysis: bilibili.0,
             bilibili_jobs: bilibili.1,
             provisioning,
@@ -569,6 +663,8 @@ impl AppState {
         let _gate = self.media_gate.lock();
         self.download_activity.close();
         self.x_analysis.shutdown();
+        self.tiktok_analysis.shutdown();
+        self.tiktok_jobs.shutdown();
         self.bilibili_analysis.shutdown();
         self.bilibili_jobs.shutdown();
         self.x_jobs.shutdown();

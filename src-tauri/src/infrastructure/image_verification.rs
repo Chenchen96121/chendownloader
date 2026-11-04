@@ -348,6 +348,7 @@ where
     let exit = process
         .run(
             ProcessRequest {
+                stdin: None,
                 program: ProcessProgram::from_resolved_tool(ffprobe),
                 args,
                 working_dir: working_dir.to_owned(),

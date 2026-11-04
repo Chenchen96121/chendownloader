@@ -243,6 +243,7 @@ pub(super) fn hydrate_formats<R: ManagedToolResolver, P: ProcessSupervisor>(
                 process_attempts += 1;
                 let result = process.run(
                     ProcessRequest {
+                        stdin: None,
                         program: ProcessProgram::from_resolved_tool(
                             crate::application::tool_resolver::ResolvedTool {
                                 name: tool.name,

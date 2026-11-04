@@ -201,6 +201,7 @@ where
                 source: source.clone(),
                 playlist_item: resolved_selector.playlist_item(),
                 instagram_selector: Some(resolved_selector),
+                tiktok_source: None,
                 x_source: None,
                 bilibili_source: None,
                 plan: plan.clone(),

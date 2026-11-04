@@ -573,3 +573,116 @@ pub fn open_instagram_completed_location(
 ) -> Result<(), DownloadErrorCode> {
     state.open_instagram_completed_location(&request.job_id)
 }
+
+#[tauri::command]
+pub async fn analyze_tiktok(
+    request: AnalyzeTikTokRequest,
+    state: State<'_, AppState>,
+) -> Result<crate::domain::tiktok::TikTokAnalysisPreview, AnalysisErrorCode> {
+    let runtime = state.tiktok_analysis_handle();
+    let readiness = state.tiktok_analysis_readiness();
+    tauri::async_runtime::spawn_blocking(move || {
+        readiness?;
+        runtime.analyze(&request.url)
+    })
+    .await
+    .unwrap_or(Err(AnalysisErrorCode::ProcessFailed))
+}
+
+#[tauri::command]
+pub async fn get_tiktok_preview(
+    request: GetTikTokPreviewRequest,
+    state: State<'_, AppState>,
+) -> Result<crate::domain::tiktok::TikTokPreviewPayload, AnalysisErrorCode> {
+    let runtime = state.tiktok_analysis_handle();
+    let readiness = state.tiktok_analysis_readiness();
+    tauri::async_runtime::spawn_blocking(move || {
+        readiness?;
+        runtime.load_preview(&request.analysis_id, &request.item_id)
+    })
+    .await
+    .unwrap_or(Err(AnalysisErrorCode::ProcessFailed))
+}
+
+#[tauri::command]
+pub fn open_tiktok_source(
+    request: OpenTikTokSourceRequest,
+    state: State<'_, AppState>,
+) -> Result<(), AnalysisErrorCode> {
+    state.open_tiktok_source(&request.analysis_id)
+}
+
+#[tauri::command]
+pub fn start_tiktok_download(
+    request: StartTikTokDownloadRequest,
+    state: State<AppState>,
+) -> Result<crate::application::tiktok_download_job::StartedTikTokDownload, DownloadErrorCode> {
+    state.start_tiktok_download(
+        &request.analysis_id,
+        &request.destination_id,
+        request.intent,
+    )
+}
+
+#[tauri::command]
+pub fn cancel_tiktok_download(
+    request: TikTokDownloadJobRequest,
+    state: State<AppState>,
+) -> Result<(), DownloadErrorCode> {
+    state.cancel_tiktok_download(&request.job_id)
+}
+
+#[tauri::command]
+pub fn get_tiktok_download_result(
+    request: TikTokDownloadJobRequest,
+    state: State<AppState>,
+) -> Result<crate::domain::tiktok::TikTokDownloadResult, DownloadErrorCode> {
+    state.tiktok_download_result(&request.job_id)
+}
+
+#[tauri::command]
+pub fn open_tiktok_completed_location(
+    request: TikTokDownloadJobRequest,
+    state: State<AppState>,
+) -> Result<(), DownloadErrorCode> {
+    state.open_tiktok_completed_location(&request.job_id)
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct AnalyzeTikTokRequest {
+    url: String,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct GetTikTokPreviewRequest {
+    analysis_id: String,
+    item_id: String,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct OpenTikTokSourceRequest {
+    analysis_id: String,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct StartTikTokDownloadRequest {
+    analysis_id: String,
+    destination_id: String,
+    intent: crate::domain::tiktok::TikTokDownloadIntent,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct TikTokDownloadJobRequest {
+    job_id: String,
+}
+
+#[tauri::command]
+pub fn get_tiktok_runtime_status(
+) -> Result<crate::infrastructure::tiktok::tool::TikTokRuntimeStatus, AnalysisErrorCode> {
+    Ok(crate::infrastructure::tiktok::tool::TikTokToolResolver::from_executable()?.status())
+}

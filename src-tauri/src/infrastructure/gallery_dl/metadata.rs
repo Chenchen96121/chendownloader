@@ -270,6 +270,7 @@ where
         .process
         .run(
             ProcessRequest {
+                stdin: None,
                 program: ProcessProgram::from_resolved_tool(gallery_dl),
                 args,
                 working_dir: working.path().to_owned(),

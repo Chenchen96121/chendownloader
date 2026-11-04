@@ -154,6 +154,7 @@ impl<R: ManagedToolResolver + Send + Sync, P: ProcessSupervisor + Send + Sync>
             self.process
                 .run(
                     ProcessRequest {
+                        stdin: None,
                         program: ProcessProgram::from_resolved_tool(tool)
                             .with_explicit_https_proxy_for_host("www.instagram.com"),
                         args,

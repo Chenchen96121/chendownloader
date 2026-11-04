@@ -34,6 +34,7 @@ impl<P: ProcessSupervisor> ToolVersionProbe for NativeToolVersionProbe<P> {
             .process
             .run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_verified_staged_candidate(candidate.to_owned()),
                     args: vec![OsString::from(match tool {
                         ToolName::YtDlp | ToolName::Deno | ToolName::GalleryDl => "--version",

@@ -15,6 +15,7 @@ pub struct DownloadExecutionRequest {
     pub source: ValidatedMediaUrl,
     pub playlist_item: Option<u16>,
     pub instagram_selector: Option<InstagramVideoSelector>,
+    pub tiktok_source: Option<super::tiktok_video::VerifiedTikTokDownloadSource>,
     pub x_source: Option<super::x_video::VerifiedXDownloadSource>,
     pub bilibili_source: Option<super::bilibili_download::VerifiedBilibiliDownloadSource>,
     pub plan: SelectionPlan,

@@ -6,11 +6,11 @@
 
 ## 简体中文
 
-本地运行的 Windows 多平台媒体下载器。支持 YouTube、Instagram、X 和哔哩哔哩，完整解压后即可使用，无需安装本应用或单独下载运行组件。
+本地运行的 Windows 多平台媒体下载器。支持 YouTube、Instagram、TikTok、X 和哔哩哔哩，完整解压后即可使用，无需安装本应用或单独下载运行组件。
 
-[下载 Windows x64 便携包](https://github.com/Chenchen96121/chendownloader/releases/download/1.0.0/chendownloader-1.0.0-windows-x64.zip) · [查看发布页](https://github.com/Chenchen96121/chendownloader/releases/tag/1.0.0)
+[下载 Windows x64 便携包](https://github.com/Chenchen96121/chendownloader/releases/latest) · [查看发布页](https://github.com/Chenchen96121/chendownloader/releases/latest)
 
-![chendownloader](docs/assets/chendownloader-1.0.0.png)
+![chendownloader](docs/assets/chendownloader-1.1.0.png)
 
 ### 支持平台
 
@@ -18,6 +18,7 @@
 | --- | --- | --- |
 | YouTube | 公开单视频 | 最高质量、手动分辨率/容器、仅视频、仅音频，支持片段剪切 |
 | Instagram | 公开帖子、Reels，包含图片和视频 | 最高质量单项、所选或整帖下载 |
+| TikTok | 公开视频、图片图集 | 最高质量单项、所选或整帖下载 |
 | X | 公开帖中的图片、视频和动图视频 | 最高质量单项、所选或整帖下载 |
 | 哔哩哔哩 | 普通 BV/av 视频及指定单个 P | 最高质量、手动分辨率/容器、仅视频、仅音频，支持片段剪切 |
 
@@ -27,7 +28,7 @@
 - 根据实际编码无损封装，优先使用 MP4，其次 WebM，必要时使用 MKV。
 - 兼容模式默认关闭；主动开启后可转换为 H.264 + AAC + MP4。
 - 支持封面/媒体预览，常用来源信息和可展开的详细信息。
-- 四个平台共用任务队列，默认同时下载 2 项，可在设置中调整为 1–4 项；任务可独立取消，切换平台不打断已提交任务。
+- 五个平台共用任务队列，默认同时下载 2 项，可在设置中调整为 1–4 项；任务可独立取消，切换平台不打断已提交任务。
 - 默认简体中文，可切换英文；下载目录、语言和并发偏好保存在本机。
 - 解析预览与下载选项独立滚动，窗口整体保持固定高度。
 
@@ -35,7 +36,7 @@
 
 ### 使用方法
 
-1. 下载 **chendownloader-1.0.0-windows-x64.zip**，而不是 GitHub 自动生成的 Source code 压缩包。
+1. 下载 **chendownloader-1.1.0-windows-x64.zip**，而不是 GitHub 自动生成的 Source code 压缩包。
 2. 完整解压到普通文件夹，运行 **chendownloader.exe**。
 3. 在设置中选择默认下载目录。
 4. 选择平台，粘贴链接并解析，确认下载选项后开始下载。
@@ -43,7 +44,7 @@
 可使用同名 `.zip.sha256` 文件核对压缩包摘要：
 
 ```powershell
-Get-FileHash .\chendownloader-1.0.0-windows-x64.zip -Algorithm SHA256
+Get-FileHash .\chendownloader-1.1.0-windows-x64.zip -Algorithm SHA256
 ```
 
 系统要求：Windows 10 22H2 或 Windows 11 x64，以及 Microsoft Edge WebView2 Runtime。当前程序未做代码签名。
@@ -52,11 +53,11 @@ Get-FileHash .\chendownloader-1.0.0-windows-x64.zip -Algorithm SHA256
 
 媒体请求和文件保存均在用户电脑上完成，没有项目账号服务器、媒体中转服务或遥测。应用默认不读取浏览器 Cookie，不要求登录。升级或重新解压会继续读取本机偏好；下载历史和队列仅保留当前会话。退出应用会取消未完成任务，不支持跨重启续传。
 
-当前支持匿名可访问的公开内容，不提供登录/Cookie 导入、会员/付费内容解锁、直播、播放列表、哔哩哔哩多 P 批量下载或扩展包安装。Instagram 和 X 不提供剪切或手动分辨率选择。平台可用性受网络、代理和平台访问策略影响。请仅下载你有权保存的内容。
+当前支持匿名可访问的公开内容，不提供登录/Cookie 导入、会员/付费内容解锁、直播、播放列表、哔哩哔哩多 P 批量下载或扩展包安装。Instagram、TikTok 和 X 不提供剪切或手动分辨率选择。平台可用性受网络、代理和平台访问策略影响。请仅下载你有权保存的内容。
 
 ### 源码与许可
 
-技术栈：Tauri 2、React、TypeScript、Rust、yt-dlp、gallery-dl、Deno、FFmpeg/FFprobe。
+技术栈：Tauri 2、React、TypeScript、Rust、TikTok 本地辅助组件、yt-dlp、gallery-dl、Deno、FFmpeg/FFprobe。
 
 [源码构建说明](docs/BUILD.md) · [第三方组件说明](THIRD_PARTY_NOTICES.md)
 
@@ -66,9 +67,9 @@ Get-FileHash .\chendownloader-1.0.0-windows-x64.zip -Algorithm SHA256
 
 ## English
 
-A local Windows media downloader for YouTube, Instagram, X, and Bilibili. Extract the complete portable package to get started. No application installation or separate runtime component downloads are needed.
+A local Windows media downloader for YouTube, Instagram, TikTok, X, and Bilibili. Extract the complete portable package to get started. No application installation or separate runtime component downloads are needed.
 
-[Download the Windows x64 portable package](https://github.com/Chenchen96121/chendownloader/releases/download/1.0.0/chendownloader-1.0.0-windows-x64.zip) · [View the release](https://github.com/Chenchen96121/chendownloader/releases/tag/1.0.0)
+[Download the Windows x64 portable package](https://github.com/Chenchen96121/chendownloader/releases/latest) · [View the release](https://github.com/Chenchen96121/chendownloader/releases/latest)
 
 ### Supported platforms
 
@@ -76,6 +77,7 @@ A local Windows media downloader for YouTube, Instagram, X, and Bilibili. Extrac
 | --- | --- | --- |
 | YouTube | Individual public videos | Highest quality, manual resolution/container selection, video only, audio only; supports downloading a selected time range |
 | Instagram | Public posts and Reels, including images and videos | Highest-quality downloads of individual items, selected items, or the entire post |
+| TikTok | Public videos and photo posts | Highest-quality downloads of individual items, selected items, or the entire post |
 | X | Images, videos, and animated videos in public posts | Highest-quality downloads of individual items, selected items, or the entire post |
 | Bilibili | Standard BV/av videos and a specified single part (P) | Highest quality, manual resolution/container selection, video only, audio only; supports downloading a selected time range |
 
@@ -85,7 +87,7 @@ A local Windows media downloader for YouTube, Instagram, X, and Bilibili. Extrac
 - Remuxes streams without re-encoding based on codec compatibility, preferring MP4, then WebM, and using MKV when needed.
 - Compatibility mode is off by default. Enable it explicitly to convert to H.264 + AAC in MP4.
 - Cover and media previews, essential source information, and expandable technical details.
-- A shared download queue across all four platforms. Two concurrent tasks by default, adjustable from 1 to 4 in Settings. Cancel tasks independently and switch platforms without interrupting submitted tasks.
+- A shared download queue across all five platforms. Two concurrent tasks by default, adjustable from 1 to 4 in Settings. Cancel tasks independently and switch platforms without interrupting submitted tasks.
 - Simplified Chinese by default, with an English option. Download folder, language, and concurrency preferences are saved locally.
 - Independently scrollable preview and download-options panels within a fixed-height application layout.
 
@@ -93,7 +95,7 @@ A local Windows media downloader for YouTube, Instagram, X, and Bilibili. Extrac
 
 ### Getting started
 
-1. Download **chendownloader-1.0.0-windows-x64.zip**, rather than the Source code archives generated by GitHub.
+1. Download **chendownloader-1.1.0-windows-x64.zip**, rather than the Source code archives generated by GitHub.
 2. Extract the entire package into a regular folder and run **chendownloader.exe**.
 3. Choose a default download folder in Settings.
 4. Select a platform, paste a link, parse it, review the download options, and start downloading.
@@ -101,7 +103,7 @@ A local Windows media downloader for YouTube, Instagram, X, and Bilibili. Extrac
 Verify the archive’s SHA-256 hash against the accompanying `.zip.sha256` file:
 
 ```powershell
-Get-FileHash .\chendownloader-1.0.0-windows-x64.zip -Algorithm SHA256
+Get-FileHash .\chendownloader-1.1.0-windows-x64.zip -Algorithm SHA256
 ```
 
 System requirements: Windows 10 22H2 or Windows 11 x64, with Microsoft Edge WebView2 Runtime. The application is currently unsigned.
@@ -110,7 +112,7 @@ System requirements: Windows 10 22H2 or Windows 11 x64, with Microsoft Edge WebV
 
 Media requests and file saving take place on your computer. The project runs no account server, media relay service, or telemetry. The application does not read browser cookies by default or require login. Upgrading or extracting a new copy continues to use your locally saved preferences. Download history and the queue last only for the current session. Exiting the application cancels unfinished tasks; resuming downloads across restarts is not supported.
 
-Currently supports public content accessible anonymously. Login/cookie import, unlocking membership or paid content, live streams, playlists, Bilibili multi-part batch downloads, and extension installation are not available. Instagram and X do not offer time-range clipping or manual resolution selection. Availability depends on your network, proxy, and the platform’s access policies. Only download content you have permission to save.
+Currently supports public content accessible anonymously. Login/cookie import, unlocking membership or paid content, live streams, playlists, Bilibili multi-part batch downloads, and extension installation are not available. Instagram, TikTok, and X do not offer time-range clipping or manual resolution selection. Availability depends on your network, proxy, and the platform’s access policies. Only download content you have permission to save.
 
 ### Source and licensing
 

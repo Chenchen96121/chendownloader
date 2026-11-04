@@ -191,6 +191,7 @@ fn original_instagram_post_and_reel_analyze_preview_and_download() {
                             source: resolved.source().clone(),
                             playlist_item: selector.playlist_item(),
                             instagram_selector: Some(selector.clone()),
+                            tiktok_source: None,
                             x_source: None,
                             bilibili_source: None,
                             plan: plan.clone(),

@@ -1,3 +1,4 @@
+import { TikTokWorkspace } from "../features/tiktok/TikTokWorkspace";
 import { useEffect, useRef, useState } from "react";
 import { LiveAnalysisWorkspace } from "../features/analyze/LiveAnalysisWorkspace";
 import { InstagramWorkspace } from "../features/instagram/InstagramWorkspace";
@@ -131,6 +132,9 @@ export function App() {
         : <StartupGate status={provisioning.status} copy={copy} />}
       instagramWorkspace={shouldShowWorkspace(provisioning)
         ? <InstagramWorkspace locale={locale} active={route === "instagram"} destinationRevision={destinationRevision} onOpenSettings={() => setRoute("settings")} />
+        : <StartupGate status={provisioning.status} copy={copy} />}
+      tiktokWorkspace={shouldShowWorkspace(provisioning)
+        ? <TikTokWorkspace locale={locale} active={route === "tiktok"} destinationRevision={destinationRevision} onOpenSettings={() => setRoute("settings")} />
         : <StartupGate status={provisioning.status} copy={copy} />}
       xWorkspace={shouldShowWorkspace(provisioning)
         ? <XWorkspace locale={locale} active={route === "x"} destinationRevision={destinationRevision} onOpenSettings={() => setRoute("settings")} />

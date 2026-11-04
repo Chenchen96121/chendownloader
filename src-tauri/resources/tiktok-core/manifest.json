@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "target": "x86_64-pc-windows-msvc",
+  "version": "1.1.0",
+  "artifact": "tiktok-core-x86_64-pc-windows-msvc.exe",
+  "sha256": "044204a129d519ef28761553d34c301bd02e975cea405f62713fc4ba0fd9275d"
+}

@@ -16,6 +16,7 @@ pub enum DownloadOwner {
     Instagram,
     X,
     Bilibili,
+    Tiktok,
     ToolRepair,
 }
 
@@ -134,6 +135,7 @@ impl DownloadActivityGate {
             DownloadOwner::Instagram => Platform::Instagram,
             DownloadOwner::X => Platform::X,
             DownloadOwner::Bilibili => Platform::Bilibili,
+            DownloadOwner::Tiktok => Platform::Tiktok,
             DownloadOwner::ToolRepair => return Err(DownloadErrorCode::InvalidRequest),
         };
         if title.trim().is_empty()
@@ -212,6 +214,7 @@ impl DownloadActivityGate {
                         Platform::Instagram => DownloadOwner::Instagram,
                         Platform::X => DownloadOwner::X,
                         Platform::Bilibili => DownloadOwner::Bilibili,
+                        Platform::Tiktok => DownloadOwner::Tiktok,
                     })
             })
         })
@@ -334,6 +337,48 @@ impl DownloadActivityGate {
             XJobState::Partial => TaskPhase::Partial,
             XJobState::Failed => TaskPhase::Failed,
             XJobState::Canceled => TaskPhase::Canceled,
+        };
+        self.record(
+            &progress.job_id,
+            phase,
+            if progress.item_count == 1 {
+                progress.percent
+            } else {
+                None
+            },
+        );
+    }
+    pub fn record_tiktok(&self, progress: &crate::domain::tiktok::TikTokDownloadProgress) {
+        use crate::domain::tiktok::TikTokJobState;
+        if progress.validate().is_err() {
+            return;
+        }
+        let is_x = self
+            .inner
+            .state
+            .lock()
+            .ok()
+            .and_then(|s| {
+                progress
+                    .job_id
+                    .parse::<u64>()
+                    .ok()
+                    .and_then(|id| s.tasks.get(&id).map(|t| t.platform == Platform::Tiktok))
+            })
+            .unwrap_or(false);
+        if !is_x {
+            return;
+        }
+        let phase = match progress.state {
+            TikTokJobState::Queued => TaskPhase::Queued,
+            TikTokJobState::Downloading => TaskPhase::Downloading,
+            TikTokJobState::Processing => TaskPhase::Processing,
+            TikTokJobState::Verifying => TaskPhase::Verifying,
+            TikTokJobState::Publishing => TaskPhase::Publishing,
+            TikTokJobState::Completed => TaskPhase::Completed,
+            TikTokJobState::Partial => TaskPhase::Partial,
+            TikTokJobState::Failed => TaskPhase::Failed,
+            TikTokJobState::Canceled => TaskPhase::Canceled,
         };
         self.record(
             &progress.job_id,

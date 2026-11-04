@@ -25,6 +25,9 @@ pub(crate) mod preview_encoding;
 pub mod preview_security;
 pub mod preview_selection;
 pub mod process;
+pub mod tiktok_analysis;
+pub mod tiktok_source;
+pub mod tiktok_video;
 pub mod tool_bootstrap;
 pub mod tool_manifest;
 pub mod tool_provisioning;
@@ -33,3 +36,5 @@ pub mod x_analysis;
 pub mod x_download_job;
 pub mod x_source;
 pub mod x_video;
+
+pub mod tiktok_download_job;

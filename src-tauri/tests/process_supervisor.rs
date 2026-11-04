@@ -44,6 +44,7 @@ fn fixture_program() -> ProcessProgram {
 
 fn capture_request(working_dir: &Path, args: &[&str]) -> ProcessRequest {
     ProcessRequest {
+        stdin: None,
         program: fixture_program(),
         args: args.iter().map(OsString::from).collect(),
         working_dir: working_dir.to_owned(),
@@ -74,6 +75,48 @@ fn preserves_unicode_arguments_without_a_shell() {
     assert_eq!(actual, ["路径 🚀", "space kept", "\"quoted\""]);
     assert_eq!(exit.code, 0);
     assert!(exit.stderr.is_empty());
+}
+
+#[test]
+fn sends_bounded_explicit_stdin_without_command_line_secrets() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut request = capture_request(directory.path(), &["stdin-echo"]);
+    let input = "private anonymous context 路径".as_bytes().to_vec();
+    request.stdin = Some(input.clone());
+    let result = WindowsProcessSupervisor
+        .run(request, CancellationToken::new(), &NoopSink)
+        .unwrap();
+    assert_eq!(result.stdout, input);
+}
+
+#[test]
+fn oversized_stdin_does_not_launch_and_unread_stdin_obeys_timeout() {
+    let directory = tempfile::tempdir().unwrap();
+    let marker = directory.path().join("should-not-exist");
+    let mut request = capture_request(
+        directory.path(),
+        &["mark-sleep", marker.to_str().unwrap(), "10000"],
+    );
+    request.stdin = Some(vec![b'A'; 65_537]);
+    assert_eq!(
+        WindowsProcessSupervisor
+            .run(request, CancellationToken::new(), &NoopSink)
+            .unwrap_err(),
+        ProcessFailureKind::IoFailed
+    );
+    assert!(!marker.exists());
+
+    let mut request = capture_request(directory.path(), &["sleep", "10000"]);
+    request.stdin = Some(vec![b'A'; 65_536]);
+    request.timeout = Some(Duration::from_millis(250));
+    let started = Instant::now();
+    assert_eq!(
+        WindowsProcessSupervisor
+            .run(request, CancellationToken::new(), &NoopSink)
+            .unwrap_err(),
+        ProcessFailureKind::TimedOut
+    );
+    assert!(started.elapsed() < Duration::from_secs(3));
 }
 
 #[test]
@@ -109,6 +152,7 @@ fn streams_complete_lines_and_retains_bounded_stderr() {
     let exit = WindowsProcessSupervisor
         .run(
             ProcessRequest {
+                stdin: None,
                 program: fixture_program(),
                 args: ["lines"].into_iter().map(OsString::from).collect(),
                 working_dir: working_dir.path().to_owned(),
@@ -170,6 +214,7 @@ fn rejects_stdout_stderr_and_line_overflow() {
     );
 
     let line = ProcessRequest {
+        stdin: None,
         program: fixture_program(),
         args: ["long-line", "9"].into_iter().map(OsString::from).collect(),
         working_dir: working_dir.path().to_owned(),

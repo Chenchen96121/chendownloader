@@ -64,6 +64,7 @@ pub fn validate_media_url(input: &str) -> Result<ValidatedMediaUrl, AnalysisErro
         "bilibili.com" | "www.bilibili.com" => Platform::Bilibili,
         "x.com" | "www.x.com" | "twitter.com" | "www.twitter.com" => Platform::X,
         "instagram.com" | "www.instagram.com" => Platform::Instagram,
+        "tiktok.com" | "www.tiktok.com" => Platform::Tiktok,
         _ => return Err(UnsupportedPlatform),
     };
     if platform == Platform::X && authority_syntax.contains(':') {
@@ -82,6 +83,15 @@ pub fn validate_media_url(input: &str) -> Result<ValidatedMediaUrl, AnalysisErro
     let path = path.strip_suffix('/').unwrap_or(path);
     let segments = path.split('/').collect::<Vec<_>>();
     let (media_id, instagram_kind) = match (platform, segments.as_slice()) {
+        (Platform::Tiktok, ["", user, "video" | "photo", id])
+            if user.strip_prefix('@').is_some_and(|name| {
+                ascii_token(name, 64, |b| {
+                    b.is_ascii_alphanumeric() || matches!(b, b'_' | b'.' | b'-')
+                })
+            }) && digits(id, 20) =>
+        {
+            ((*id).to_owned(), None)
+        }
         (Platform::Youtube, ["", "watch"]) if host != "youtu.be" => {
             let mut ids = parsed.query_pairs().filter(|(key, _)| key == "v");
             let (_, id) = ids.next().ok_or(UnsupportedMedia)?;
@@ -145,6 +155,8 @@ pub fn validate_media_url(input: &str) -> Result<ValidatedMediaUrl, AnalysisErro
     };
     let url = if platform == Platform::X {
         format!("https://x.com/i/web/status/{media_id}")
+    } else if platform == Platform::Tiktok {
+        format!("https://www.tiktok.com{path}")
     } else if let Some(kind) = instagram_kind {
         format!(
             "https://www.instagram.com/{}/{}/",

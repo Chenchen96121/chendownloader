@@ -1,5 +1,5 @@
 use std::{
-    io::Read,
+    io::{Read, Write},
     mem::size_of,
     os::windows::{io::AsRawHandle, process::CommandExt},
     process::{Child, Command, Stdio},
@@ -73,12 +73,23 @@ impl ProcessSupervisor for WindowsProcessSupervisor {
         if cancellation.is_canceled() {
             return Err(ProcessFailureKind::Canceled);
         }
+        if request
+            .stdin
+            .as_ref()
+            .is_some_and(|input| input.len() > 65_536)
+        {
+            return Err(ProcessFailureKind::IoFailed);
+        }
 
         let job = Job::new()?;
         let mut command = Command::new(request.program.path());
         command
             .current_dir(&request.working_dir)
-            .stdin(Stdio::null())
+            .stdin(if request.stdin.is_some() {
+                Stdio::piped()
+            } else {
+                Stdio::null()
+            })
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .env_clear()
@@ -87,6 +98,9 @@ impl ProcessSupervisor for WindowsProcessSupervisor {
             if let Some(value) = std::env::var_os(name) {
                 command.env(name, value);
             }
+        }
+        if let Some(directory) = request.program.private_temp_directory() {
+            command.env("TEMP", directory).env("TMP", directory);
         }
         if request.program.system_proxy_allowed() {
             configure_system_proxy_for_tool(
@@ -109,12 +123,25 @@ impl ProcessSupervisor for WindowsProcessSupervisor {
         let stderr = child.stderr.take().ok_or(ProcessFailureKind::IoFailed)?;
         let (tx, rx) = mpsc::sync_channel(PIPE_CHANNEL_DEPTH);
         let stdout_reader = spawn_reader(ProcessStream::Stdout, stdout, tx.clone());
-        let stderr_reader = spawn_reader(ProcessStream::Stderr, stderr, tx);
+        let stderr_reader = spawn_reader(ProcessStream::Stderr, stderr, tx.clone());
+        let input_writer = request.stdin.as_ref().map(|input| {
+            let bytes = input.clone();
+            let pipe = child.stdin.take();
+            let sender = tx.clone();
+            thread::spawn(move || {
+                let success = pipe.is_some_and(|mut pipe| pipe.write_all(&bytes).is_ok());
+                let _ = sender.send(PipeEvent::InputFinished(success));
+            })
+        });
+        drop(tx);
 
         let result = supervise(&job, &mut child, &rx, &request, &cancellation, sink);
         drop(rx);
         join_reader(stdout_reader);
         join_reader(stderr_reader);
+        if let Some(writer) = input_writer {
+            join_reader(writer);
+        }
         result
     }
 }
@@ -133,12 +160,13 @@ fn supervise(
     let mut stdout_eof = false;
     let mut stderr_eof = false;
     let mut status = None;
+    let mut input_finished = request.stdin.is_none();
 
     loop {
         if status.is_none() {
             status = child.try_wait().map_err(|_| ProcessFailureKind::IoFailed)?;
         }
-        if status.is_some() && stdout_eof && stderr_eof {
+        if status.is_some() && stdout_eof && stderr_eof && input_finished {
             break;
         }
         // Descendants may keep inherited pipes open after the parent exits.
@@ -164,6 +192,11 @@ fn supervise(
         }
 
         match receiver.recv_timeout(POLL_INTERVAL) {
+            Ok(PipeEvent::InputFinished(true)) => input_finished = true,
+            Ok(PipeEvent::InputFinished(false)) => {
+                terminate_and_reap(job, child);
+                return Err(ProcessFailureKind::IoFailed);
+            }
             Ok(PipeEvent::Data(stream, bytes)) => {
                 last_activity = Instant::now();
                 if let Err(failure) = collector.push(stream, &bytes, sink) {
@@ -206,6 +239,7 @@ fn supervise(
 }
 
 enum PipeEvent {
+    InputFinished(bool),
     Data(ProcessStream, Vec<u8>),
     Eof(ProcessStream),
     Failed,

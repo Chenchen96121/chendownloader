@@ -553,3 +553,5 @@ fn is_reparse_point(metadata: &fs::Metadata) -> bool {
 fn is_reparse_point(_metadata: &fs::Metadata) -> bool {
     false
 }
+
+pub mod tiktok;

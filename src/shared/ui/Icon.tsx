@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 const shapes = {
   download: <><path d="M12 3v12m-5-5 5 5 5-5" /><path d="M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4" /></>,
   youtube: <><rect x="3" y="5" width="18" height="14" rx="4" /><path d="m10 9 5 3-5 3Z" /></>,
+  tiktok: <><path d="M14 3v12a5 5 0 1 1-5-5v4a1 1 0 1 0 1 1V3h4Zm0 0c1 4 3 5 6 5v4c-3 0-5-1-6-3" /></>,
   instagram: <><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><path d="M17.5 6.5h.01" /></>,
   x: <><path d="m5 4 14 16M19 4 5 20" /></>,
   bilibili: <><rect x="3" y="6" width="18" height="14" rx="3" /><path d="m7 2 3 4m7-4-3 4M8 11v3m8-3v3m-6 3h4" /></>,

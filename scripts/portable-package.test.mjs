@@ -14,7 +14,53 @@ import {
   readTrustedManifest,
   stagePortableTree,
   validateVendorInputs,
+  validateTikTokCore,
 } from "./portable-package.mjs";
+
+test("TikTok is separately pinned; absent, tampered, or wrong protocol helpers fail",async()=>{
+ const fixture=await makeFixture();
+ try{
+  const manifestPath=path.join(fixture.repositoryRoot,"src-tauri/resources/tiktok-core/manifest.json");
+  const executable=path.join(fixture.fixtureRoot,"platform-tools/tiktok-core-x86_64-pc-windows-msvc.exe");
+  const manifest={schemaVersion:1,protocolVersion:1,target:TARGET,version:"1.1.0",artifact:path.basename(executable),sha256:digest("helper")};
+  await writeText(manifestPath,JSON.stringify(manifest));
+  await assert.rejects(validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable}),/ENOENT|regular/);
+  await writeText(executable,"helper");
+  const probeRunner=async()=>"chendownloader-tiktok-core 1.1.0 protocol=1\n";
+  await assert.rejects(validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable,probeRunner}),/NOTICES|ENOENT/);
+  await writeText(path.join(fixture.repositoryRoot,"packaging/licenses/tiktok-core-NOTICES.txt"),"licenses");
+  assert.equal((await validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable,probeRunner})).manifest.version,"1.1.0");
+  await writeText(executable,"changed");
+  await assert.rejects(validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable,probeRunner}),/digest/);
+  await writeText(executable,"helper");
+  await assert.rejects(validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable,probeRunner:async()=>"wrong"}),/identity/);
+  await writeText(manifestPath,JSON.stringify({...manifest,protocolVersion:2}));
+  await assert.rejects(validateTikTokCore({repositoryRoot:fixture.repositoryRoot,executablePath:executable,probeRunner}),/manifest/);
+ }finally{await fixture.cleanup();}
+});
+
+test("1.1.0 portable package requires its independent helper, exact materials, and clean tree",async()=>{
+ const fixture=await makeFixture();
+ try{
+  await writeText(path.join(fixture.repositoryRoot,"package.json"),JSON.stringify({version:"1.1.0"}));
+  await writeText(path.join(fixture.repositoryRoot,"src-tauri/tauri.conf.json"),JSON.stringify({version:"1.1.0"}));
+  await writeText(path.join(fixture.repositoryRoot,"src-tauri/Cargo.toml"),'[package]\nversion = "1.1.0"\n');
+  const helper=path.join(fixture.fixtureRoot,"helper/tiktok-core-x86_64-pc-windows-msvc.exe");
+  await writeText(helper,"helper");
+  await writeText(path.join(fixture.repositoryRoot,"src-tauri/resources/tiktok-core/manifest.json"),JSON.stringify({schemaVersion:1,protocolVersion:1,target:TARGET,version:"1.1.0",artifact:path.basename(helper),sha256:digest("helper")}));
+  await writeText(path.join(fixture.repositoryRoot,"packaging/licenses/tiktok-core-NOTICES.txt"),"licenses");
+  const probeRunner=async args=>args.tool.name==="tiktok-core"?"chendownloader-tiktok-core 1.1.0 protocol=1":fixture.probeRunner(args);
+  await assert.rejects(stagePortableTree({...fixture,probeRunner}),/tiktokCorePath/);
+  const staged=await stagePortableTree({...fixture,tiktokCorePath:helper,probeRunner});
+  assert.equal(staged.toolCount,5);
+  const options={repositoryRoot:fixture.repositoryRoot,portableRoot:fixture.outputRoot,peInspector:fixture.peInspector,probeRunner};
+  assert.ok((await auditPortableTree(options)).relativePaths.includes("resources/platform-tools/manifest.json"));
+  const bundled=path.join(fixture.outputRoot,"resources/platform-tools",path.basename(helper));
+  await writeText(bundled,"tampered");await assert.rejects(auditPortableTree(options),/digest/);await writeText(bundled,"helper");
+  await writeText(path.join(fixture.outputRoot,"resources/platform-tools/cookies.txt"),"private");
+  await assert.rejects(auditPortableTree(options),/forbidden|allowlist/);
+ }finally{await fixture.cleanup();}
+});
 
 const execFile = promisify(execFileCallback);
 const SCRIPT_DIRECTORY = path.dirname(fileURLToPath(import.meta.url));

@@ -141,6 +141,36 @@ fn approval_ids_replace_expire_and_clear_without_exposing_paths() {
 }
 
 #[test]
+fn platforms_approving_the_same_folder_do_not_invalidate_each_other() {
+    let registry = DestinationRegistry::new(RecordingValidator::default());
+    let now = Instant::now();
+    let first = registry
+        .approve(PathBuf::from("Shared folder"), now)
+        .unwrap();
+    let second = registry
+        .approve(PathBuf::from("Shared folder"), now + Duration::from_secs(1))
+        .unwrap();
+    assert_eq!(first.destination_id, second.destination_id);
+    assert!(registry
+        .resolve(&first.destination_id, now + Duration::from_secs(2))
+        .is_ok());
+    assert!(registry
+        .resolve(&second.destination_id, now + Duration::from_secs(2))
+        .is_ok());
+    // Another platform checking the folder must not extend an existing token's lifetime.
+    assert!(registry
+        .resolve(&first.destination_id, now + DESTINATION_LIFETIME)
+        .is_err());
+    let renewed = registry
+        .approve(PathBuf::from("Shared folder"), now + DESTINATION_LIFETIME)
+        .unwrap();
+    assert_ne!(renewed.destination_id, first.destination_id);
+    assert!(registry
+        .resolve(&first.destination_id, now + DESTINATION_LIFETIME)
+        .is_err());
+}
+
+#[test]
 fn display_labels_remove_controls_bidi_marks_and_bound_length() {
     let label = sanitize_display_name(OsStr::new("  Down\nloads\u{202e} safe  "));
     assert_eq!(label, "Downloads safe");

@@ -130,6 +130,7 @@ where
             .process
             .run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_resolved_tool(yt_dlp)
                         .with_explicit_https_proxy_for_host("www.instagram.com"),
                     args,

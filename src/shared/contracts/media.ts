@@ -1,4 +1,4 @@
-export type Platform = "youtube" | "bilibili" | "x" | "instagram";
+export type Platform = "tiktok" | "youtube" | "bilibili" | "x" | "instagram";
 export type StreamKind = "video_only" | "audio_only" | "combined";
 export type DynamicRange = "SDR" | "HDR" | "HDR10" | "HDR10+" | "HDR12" | "HLG" | "DV";
 
@@ -33,7 +33,7 @@ export interface MediaInfo {
   formats: MediaFormat[];
 }
 
-const platforms = new Set<string>(["youtube", "bilibili", "x", "instagram"]);
+const platforms = new Set<string>(["tiktok", "youtube", "bilibili", "x", "instagram"]);
 const ranges = new Set<string>(["SDR", "HDR", "HDR10", "HDR10+", "HDR12", "HLG", "DV"]);
 const mediaFields = new Set(["platform", "mediaId", "title", "creator", "durationSeconds", "formats"]);
 const formatFields = new Set(["id", "container", "kind", "width", "height", "fps", "videoBitrateKbps", "audioBitrateKbps", "audioSampleRateHz", "audioChannels", "videoCodec", "audioCodec", "dynamicRange", "fileSize"]);

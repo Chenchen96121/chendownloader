@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-start-tiktok-download"
+description = "Enables the start_tiktok_download command without any pre-configured scope."
+commands.allow = ["start_tiktok_download"]
+
+[[permission]]
+identifier = "deny-start-tiktok-download"
+description = "Denies the start_tiktok_download command without any pre-configured scope."
+commands.deny = ["start_tiktok_download"]

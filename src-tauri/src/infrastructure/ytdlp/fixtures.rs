@@ -5,6 +5,7 @@ use super::normalize_metadata;
 /// Closed, compile-time sample selection: no path, tool, or platform access.
 pub fn preview_fixture(platform: Platform) -> Result<MediaInfo, AnalysisErrorCode> {
     let json = match platform {
+        Platform::Tiktok => return Err(AnalysisErrorCode::UnsupportedPlatform),
         Platform::Youtube => include_str!("../../../../tests/fixtures/ytdlp/youtube.json"),
         Platform::Bilibili => include_str!("../../../../tests/fixtures/ytdlp/bilibili.json"),
         Platform::X => include_str!("../../../../tests/fixtures/ytdlp/x.json"),

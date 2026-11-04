@@ -96,6 +96,7 @@ impl<R: ManagedToolResolver + Send + Sync, P: ProcessSupervisor + Send + Sync>
             .process
             .run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_resolved_tool(probe),
                     args,
                     working_dir: staging.to_path_buf(),
@@ -493,6 +494,7 @@ impl<R: ManagedToolResolver + Send + Sync, P: ProcessSupervisor + Send + Sync> L
             .process
             .run(
                 ProcessRequest {
+                    stdin: None,
                     program: ProcessProgram::from_resolved_tool(ffmpeg),
                     args,
                     working_dir: staging,

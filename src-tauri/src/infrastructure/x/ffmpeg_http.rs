@@ -294,6 +294,7 @@ fn fetch_with(
         });
         let result = process.run(
             ProcessRequest {
+                stdin: None,
                 program: ProcessProgram::from_resolved_tool(ResolvedTool {
                     name: ToolName::Ffmpeg,
                     version: tool.version.clone(),

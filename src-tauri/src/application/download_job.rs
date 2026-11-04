@@ -533,6 +533,7 @@ fn execute_job(
             source,
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: None,
             bilibili_source,
             plan: plan.clone(),

@@ -330,6 +330,7 @@ fn real_x_public_post_analyzes_and_downloads_video_with_production_adapters() {
                 source: inventory.source.clone(),
                 playlist_item: None,
                 instagram_selector: None,
+                tiktok_source: None,
                 x_source: Some(analyzed.source().clone()),
                 bilibili_source: None,
                 plan: plan.clone(),

@@ -183,6 +183,7 @@ fn fixture_manual_intent(platform: Platform) -> SelectionIntent {
         Platform::X | Platform::Instagram => {
             request.video_format_id = Some("combined".into());
         }
+        Platform::Tiktok => panic!("TikTok uses its independent post contract"),
     }
     request
 }

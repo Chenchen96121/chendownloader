@@ -74,6 +74,7 @@ fn request_using(
         source: snapshot.source().clone(),
         playlist_item: None,
         instagram_selector: None,
+        tiktok_source: None,
         x_source: None,
         bilibili_source: Some(source),
         plan: snapshot.plan().clone(),

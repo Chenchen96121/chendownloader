@@ -14,6 +14,7 @@ pub mod open_location;
 pub mod output;
 pub mod process;
 pub(crate) mod system_proxy;
+pub mod tiktok;
 pub mod tools;
 pub mod x;
 pub mod ytdlp;

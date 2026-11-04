@@ -1,0 +1,68 @@
+[
+  {
+    "name": "altgraph",
+    "version": "0.17.5",
+    "wheel": "altgraph-0.17.5-py2.py3-none-any.whl",
+    "sha256": "f3a22400bce1b0c701683820ac4f3b159cd301acab067c51c653e06961600597"
+  },
+  {
+    "name": "certifi",
+    "version": "2026.10.23",
+    "wheel": "certifi-2026.10.23-py3-none-any.whl",
+    "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "wheel": "cffi-2.1.1-cp312-cp312-win_amd64.whl",
+    "sha256": "f53e442b08449d42821fa4a4fba000095af9f62742a500f978a9f557ec44339a"
+  },
+  {
+    "name": "curl_cffi",
+    "version": "0.17.0",
+    "wheel": "curl_cffi-0.17.0-cp310-abi3-win_amd64.whl",
+    "sha256": "4c3993c7df155d622869b82a56adb018440587fd3faffeaf8d01cc016d2e1357"
+  },
+  {
+    "name": "packaging",
+    "version": "26.3",
+    "wheel": "packaging-26.3-py3-none-any.whl",
+    "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+  },
+  {
+    "name": "pefile",
+    "version": "2024.8.26",
+    "wheel": "pefile-2024.8.26-py3-none-any.whl",
+    "sha256": "76f8b485dcd3b1bb8166f1128d395fa3d87af26360c2358fb75b80019b957c6f"
+  },
+  {
+    "name": "pycparser",
+    "version": "3.12",
+    "wheel": "pycparser-3.12-py3-none-any.whl",
+    "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e"
+  },
+  {
+    "name": "pyinstaller",
+    "version": "6.22.3",
+    "wheel": "pyinstaller-6.22.3-py3-none-win_amd64.whl",
+    "sha256": "500bd58c7bf7e584a8435adccbd763a0b918d5c12b08d74ff50fd79b2915458b"
+  },
+  {
+    "name": "pyinstaller-hooks-contrib",
+    "version": "2026.9",
+    "wheel": "pyinstaller_hooks_contrib-2026.9-py3-none-any.whl",
+    "sha256": "fb3e67dd64122561724c48ad0366ac9e8c16e638b63bf7d85de03bf3fdbf06c3"
+  },
+  {
+    "name": "pywin32-ctypes",
+    "version": "0.2.3",
+    "wheel": "pywin32_ctypes-0.2.3-py3-none-any.whl",
+    "sha256": "8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8"
+  },
+  {
+    "name": "setuptools",
+    "version": "84.2.1",
+    "wheel": "setuptools-84.2.1-py3-none-any.whl",
+    "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2"
+  }
+]

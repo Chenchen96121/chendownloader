@@ -1,6 +1,7 @@
 import type { ToolInventory, ToolState } from "../../shared/contracts/managedTools";
 import type { ToolProvisioningErrorCode, ToolProvisioningStatus } from "../../shared/contracts/toolProvisioning";
 import type { Catalog } from "../../shared/i18n/catalog";
+import {TikTokComponentStatus} from "./TikTokComponentStatus";
 
 interface LocalComponentsSettingsProps {
   copy: Catalog;
@@ -55,6 +56,7 @@ export function LocalComponentsSettings({
         </ul>
       )}
       {errorLabel ? <p className="component-repair-error" role="status">{errorLabel}</p> : null}
+      {status?.state==="ready"?<TikTokComponentStatus copy={copy} />:null}
       <button type="button" disabled={disabled} onClick={onRepair}>
         {repairPending || status?.state === "repairing" ? copy.repairingComponents : copy.verifyAndRepair}
       </button>

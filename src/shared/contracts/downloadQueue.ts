@@ -2,7 +2,7 @@ import { isAnalysisId } from "./liveAnalysis";
 import { downloadErrorCodes, type DownloadErrorCode } from "./errors";
 export const queuePhases = ["queued", "preparing", "downloading", "processing", "verifying", "publishing", "completed", "partial", "failed", "canceled"] as const;
 export type QueuePhase = typeof queuePhases[number];
-export type QueuePlatform = "youtube" | "instagram" | "x" | "bilibili";
+export type QueuePlatform = "tiktok" | "youtube" | "instagram" | "x" | "bilibili";
 export interface DownloadTask {
   jobId: string; platform: QueuePlatform; title: string; state: QueuePhase;
   percent: number | null; errorCode: DownloadErrorCode | null; displayName: string | null;
@@ -19,7 +19,7 @@ function record(value: unknown, keys: string[]): value is Record<string, unknown
 }
 export function isDownloadTask(value: unknown): value is DownloadTask {
   return record(value, ["jobId", "platform", "title", "state", "percent", "errorCode", "displayName"])
-    && isAnalysisId(value.jobId) && (value.platform === "youtube" || value.platform === "instagram" || value.platform === "x" || value.platform === "bilibili")
+    && isAnalysisId(value.jobId) && (value.platform === "tiktok" || value.platform === "youtube" || value.platform === "instagram" || value.platform === "x" || value.platform === "bilibili")
     && typeof value.title === "string" && value.title.trim().length > 0 && Array.from(value.title).length <= 512 && !/\p{Cc}/u.test(value.title)
     && (queuePhases as readonly unknown[]).includes(value.state)
     && (value.percent === null || (typeof value.percent === "number" && Number.isFinite(value.percent) && value.percent >= 0 && value.percent <= 100))

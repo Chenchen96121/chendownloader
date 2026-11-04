@@ -345,7 +345,28 @@ export async function validateVendorInputs({ manifest, vendorRoot, probeRunner =
   return { toolCount: validated.length, tools: validated };
 }
 
-function expectedPortablePaths(manifest) {
+const TIKTOK_ARTIFACT="tiktok-core-x86_64-pc-windows-msvc.exe";
+const TIKTOK_NOTICES="tiktok-core-NOTICES.txt";
+function requiresTikTok(version){const [major,minor]=version.split(".").map(Number);return major>1||(major===1&&minor>=1);}
+function tikTokManifestPath(root){return path.join(root,"src-tauri/resources/tiktok-core/manifest.json");}
+export async function validateTikTokCore({repositoryRoot,executablePath,probeRunner=defaultProbeRunner}){
+ const root=requireAbsolute("repositoryRoot",repositoryRoot);
+ const executable=requireAbsolute("tiktokCorePath",executablePath);
+ const manifestFile=tikTokManifestPath(root);
+ await assertRegularFileWithin(root,manifestFile);
+ const manifest=JSON.parse(await readFile(manifestFile,"utf8"));
+ const fields=["schemaVersion","protocolVersion","target","version","artifact","sha256"];
+ if(Object.keys(manifest).length!==fields.length||fields.some(key=>!Object.hasOwn(manifest,key))||manifest.schemaVersion!==1||manifest.protocolVersion!==1||manifest.target!=="x86_64-pc-windows-msvc"||manifest.version!=="1.1.0"||manifest.artifact!==TIKTOK_ARTIFACT||!/^[a-f0-9]{64}$/u.test(manifest.sha256))throw new Error("Invalid TikTok trusted manifest");
+ await assertNoSymlinkComponents(path.parse(executable).root,executable,"TikTok component");
+ await assertRegularFile(executable);
+ if(await sha256File(executable)!==manifest.sha256)throw new Error("TikTok component digest differs from trusted manifest");
+ await assertRegularFileWithin(root,path.join(root,"packaging/licenses",TIKTOK_NOTICES));
+ const output=await probeRunner({tool:{name:"tiktok-core",version:manifest.version},executablePath:executable,args:["--version"]});
+ if(output.trim()!=="chendownloader-tiktok-core 1.1.0 protocol=1")throw new Error("TikTok component identity differs from trusted manifest");
+ return {manifest,executablePath:executable};
+}
+
+function expectedPortablePaths(manifest,tiktok=false) {
   return [
     "LICENSE",
     PORTABLE_EXECUTABLE,
@@ -357,6 +378,7 @@ function expectedPortablePaths(manifest) {
     "release.json",
     "resources/managed-tools/manifest.json",
     ...manifest.tools.map((tool) => `resources/managed-tools/${toolFilename(tool.name, manifest.target)}`),
+    ...(tiktok?[`resources/platform-tools/${TIKTOK_ARTIFACT}`,"resources/platform-tools/manifest.json",`licenses/${TIKTOK_NOTICES}`]:[]),
   ].sort();
 }
 
@@ -370,7 +392,7 @@ async function walkPortableTree(root) {
       if (entry.isSymbolicLink()) throw new Error(`Portable tree contains a forbidden symlink: ${absolute}`);
       if (entry.isDirectory()) {
         const relativeDirectory = path.relative(root, absolute).split(path.sep).join("/");
-        if (!["licenses", "licenses/sources", "resources", "resources/managed-tools"].includes(relativeDirectory)) {
+        if (!["licenses", "licenses/sources", "resources", "resources/managed-tools","resources/platform-tools"].includes(relativeDirectory)) {
           throw new Error(`Portable directory is outside the release allowlist: ${relativeDirectory}`);
         }
         await walk(absolute);
@@ -546,7 +568,7 @@ async function assertNoAbsolutePathLeak(portableRoot, relativePaths, sourceRoots
   }
 }
 
-export async function auditPortableTree({ repositoryRoot, portableRoot, sourceRoots = [], peInspector = defaultPeInspector }) {
+export async function auditPortableTree({ repositoryRoot, portableRoot, sourceRoots = [], peInspector = defaultPeInspector,probeRunner=defaultProbeRunner }) {
   const repository = requireAbsolute("repositoryRoot", repositoryRoot);
   const root = requireAbsolute("portableRoot", portableRoot);
   const rootEntry = await lstat(root).catch(() => null);
@@ -558,7 +580,8 @@ export async function auditPortableTree({ repositoryRoot, portableRoot, sourceRo
   const relativePaths = await walkPortableTree(root);
   for (const relativePath of relativePaths) assertNoForbiddenPath(relativePath);
 
-  const expected = expectedPortablePaths(manifest);
+  const tiktok=requiresTikTok(applicationVersion);
+  const expected = expectedPortablePaths(manifest,tiktok);
   if (relativePaths.length !== expected.length || relativePaths.some((name, index) => name !== expected[index])) {
     const missing = expected.filter((name) => !relativePaths.includes(name));
     const unexpected = relativePaths.filter((name) => !expected.includes(name));
@@ -601,6 +624,7 @@ export async function auditPortableTree({ repositoryRoot, portableRoot, sourceRo
   }
 
   const staticMaterials = [
+    ...(tiktok?[[tikTokManifestPath(repository),path.join(root,"resources/platform-tools/manifest.json")],[path.join(repository,"packaging/licenses",TIKTOK_NOTICES),path.join(root,"licenses",TIKTOK_NOTICES)]]:[]),
     [path.join(repository, "LICENSE"), path.join(root, "LICENSE")],
     [path.join(repository, "packaging", "README.txt"), path.join(root, "README.txt")],
     [path.join(repository, "THIRD_PARTY_NOTICES.md"), path.join(root, "THIRD_PARTY_NOTICES.md")],
@@ -632,9 +656,11 @@ export async function auditPortableTree({ repositoryRoot, portableRoot, sourceRo
 
   await assertNoAbsolutePathLeak(root, relativePaths, sourceRoots);
   const executablePaths = [
+    ...(tiktok?[path.join(root,"resources/platform-tools",TIKTOK_ARTIFACT)]:[]),
     path.join(root, PORTABLE_EXECUTABLE),
     ...manifest.tools.map((tool) => path.join(root, "resources", "managed-tools", toolFilename(tool.name, manifest.target))),
   ];
+  if(tiktok)await validateTikTokCore({repositoryRoot:repository,executablePath:path.join(root,"resources/platform-tools",TIKTOK_ARTIFACT),probeRunner});
   const pe = await auditPeDependencies({ executablePaths, peInspector });
   return { fileCount: relativePaths.length, relativePaths, ...pe };
 }
@@ -651,7 +677,7 @@ function isApprovedRepositoryOutput(repositoryRoot, outputRoot) {
   return outputRoot !== releaseRoot && isWithin(releaseRoot, outputRoot);
 }
 
-export async function stagePortableTree({ repositoryRoot, appPath, vendorRoot, galleryDlSourceArchive, outputRoot, probeRunner = defaultProbeRunner, peInspector = defaultPeInspector }) {
+export async function stagePortableTree({ repositoryRoot, appPath, vendorRoot, galleryDlSourceArchive, outputRoot,tiktokCorePath, probeRunner = defaultProbeRunner, peInspector = defaultPeInspector }) {
   const repository = requireAbsolute("repositoryRoot", repositoryRoot);
   const application = requireAbsolute("appPath", appPath);
   const vendor = requireAbsolute("vendorRoot", vendorRoot);
@@ -677,6 +703,7 @@ export async function stagePortableTree({ repositoryRoot, appPath, vendorRoot, g
   await assertRegularFile(sourceArchive, "gallery-dl source archive");
   const manifest = await readTrustedManifest({ repositoryRoot: repository });
   const applicationVersion = await readApplicationVersion(repository);
+  const tiktok=requiresTikTok(applicationVersion)?await validateTikTokCore({repositoryRoot:repository,executablePath:tiktokCorePath,probeRunner}):null;
   const validated = await validateVendorInputs({ manifest, vendorRoot: vendor, probeRunner });
   const sourceTemplate = await readGalleryDlSourceTemplate(repository);
   const sourceArchiveSha = await sha256File(sourceArchive);
@@ -696,6 +723,11 @@ export async function stagePortableTree({ repositoryRoot, appPath, vendorRoot, g
   await mkdir(output);
   try {
     await copyReleaseFile(application, path.join(output, PORTABLE_EXECUTABLE));
+    if(tiktok){
+      await copyReleaseFile(tiktok.executablePath,path.join(output,"resources/platform-tools",TIKTOK_ARTIFACT));
+      await copyReleaseFile(tikTokManifestPath(repository),path.join(output,"resources/platform-tools/manifest.json"));
+      await copyReleaseFile(path.join(repository,"packaging/licenses",TIKTOK_NOTICES),path.join(output,"licenses",TIKTOK_NOTICES));
+    }
     await copyReleaseFile(requiredSources[0], path.join(output, "README.txt"));
     await copyReleaseFile(requiredSources[1], path.join(output, "THIRD_PARTY_NOTICES.md"));
     await copyReleaseFile(requiredSources[2], path.join(output, "LICENSE"));
@@ -730,6 +762,7 @@ export async function stagePortableTree({ repositoryRoot, appPath, vendorRoot, g
     await utimes(releasePath, FIXED_TIMESTAMP, FIXED_TIMESTAMP);
 
     const audit = await auditPortableTree({
+      probeRunner,
       repositoryRoot: repository,
       portableRoot: output,
       sourceRoots: [repository, vendor, path.dirname(application), path.dirname(sourceArchive)],
@@ -768,6 +801,7 @@ async function runCli() {
       appPath: options.app,
       vendorRoot: options.vendor,
       galleryDlSourceArchive: options["gallery-dl-source"],
+      tiktokCorePath:options["tiktok-core"],
       outputRoot: options.output,
     });
   }

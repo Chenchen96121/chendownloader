@@ -7,6 +7,7 @@ The original application code is licensed under MIT, copyright (c) 2026 Chenchen
 | Component | Version | License and source |
 | --- | --- | --- |
 | yt-dlp | 2026.08.19 | [Unlicense and standalone third-party terms](https://github.com/yt-dlp/yt-dlp/tree/2026.08.19); both notices are included under `licenses/`. |
+| tiktok-core | 1.1.0 / protocol 1 | Original MIT worker, Apache-2.0 signing code, Python and curl_cffi dependencies. Full terms, NOTICE and pinned source identities are in `licenses/tiktok-core-NOTICES.txt` and `tools/tiktok-core/vendor/SOURCES.json`. |
 | Deno | 2.9.7 | [MIT](https://github.com/denoland/deno/tree/v2.9.7); license included under `licenses/`. |
 | gallery-dl | 1.32.15 | [GPL-2.0-only](https://codeberg.org/mikf/gallery-dl/src/tag/v1.32.15/LICENSE); exact source and digest record included under `licenses/sources/` and `licenses/`. |
 | FFmpeg / FFprobe | 9.0.2-chendownloader-d7643a0fe3 | GPL-3.0-or-later with component-specific terms. [Fixed FFmpeg source](https://github.com/FFmpeg/FFmpeg/tree/d7643a0fe3f4f65516c302eba045ba884faed015); [complete source/build attachment](https://github.com/Chenchen96121/chendownloader/releases/download/1.0.0/chendownloader-ffmpeg-sources-d7643a0fe3.tar.gz). |

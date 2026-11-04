@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/Evil0ctal/Douyin_TikTok_Download_API",
+  "commit": "2fd32e86905f96f0c8f208a14191e3fccba0c32c",
+  "files": {
+    "tiktok_sign.py": "src/dtk/signing/native/tiktok_sign.py",
+    "browser_query.py": "encode_browser_query/_browser_escape excerpt of src/dtk/signing/base.py"
+  },
+  "changes": [
+    "Local import of browser query encoder; excerpt avoids unrelated project dependencies."
+  ],
+  "license": "Apache-2.0",
+  "adaptedSha256": {
+    "tiktok_sign.py": "210818bdf207f96319c70b4df76b18b6466f82f1b56dc4519418c43c6968a826",
+    "browser_query.py": "5f78cda451ba063bac77786d42a5a5480a8de9a02dbcf9492f4eaacf268ac2c3"
+  }
+}

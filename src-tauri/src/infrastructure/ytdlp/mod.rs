@@ -10,6 +10,7 @@ mod instagram_probe;
 mod live;
 mod metadata;
 pub mod progress;
+pub mod tiktok;
 pub mod x;
 mod x_probe;
 

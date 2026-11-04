@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-tiktok-runtime-status"
+description = "Enables the get_tiktok_runtime_status command without any pre-configured scope."
+commands.allow = ["get_tiktok_runtime_status"]
+
+[[permission]]
+identifier = "deny-get-tiktok-runtime-status"
+description = "Denies the get_tiktok_runtime_status command without any pre-configured scope."
+commands.deny = ["get_tiktok_runtime_status"]

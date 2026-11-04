@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-open-tiktok-completed-location"
+description = "Enables the open_tiktok_completed_location command without any pre-configured scope."
+commands.allow = ["open_tiktok_completed_location"]
+
+[[permission]]
+identifier = "deny-open-tiktok-completed-location"
+description = "Denies the open_tiktok_completed_location command without any pre-configured scope."
+commands.deny = ["open_tiktok_completed_location"]

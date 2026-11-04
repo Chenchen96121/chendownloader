@@ -12,12 +12,20 @@ use super::tool_resolver::ResolvedTool;
 
 pub struct ProcessProgram {
     path: PathBuf,
+    private_temp_directory: Option<PathBuf>,
     system_proxy_allowed: bool,
     network_profile: Option<Arc<super::network_profile::NetworkProfile>>,
     explicit_https_proxy_host: Option<&'static str>,
 }
 
 impl ProcessProgram {
+    pub(crate) fn with_private_temp_directory(mut self, path: PathBuf) -> Self {
+        self.private_temp_directory = Some(path);
+        self
+    }
+    pub(crate) fn private_temp_directory(&self) -> Option<&Path> {
+        self.private_temp_directory.as_deref()
+    }
     pub(crate) fn with_explicit_https_proxy_for_host(mut self, host: &'static str) -> Self {
         self.explicit_https_proxy_host = Some(host);
         self
@@ -39,6 +47,7 @@ impl ProcessProgram {
     pub(crate) fn from_resolved_tool(tool: ResolvedTool) -> Self {
         Self {
             path: tool.path,
+            private_temp_directory: None,
             network_profile: None,
             explicit_https_proxy_host: None,
             system_proxy_allowed: matches!(
@@ -52,6 +61,7 @@ impl ProcessProgram {
     pub(crate) fn from_verified_staged_candidate(path: PathBuf) -> Self {
         Self {
             path,
+            private_temp_directory: None,
             network_profile: None,
             explicit_https_proxy_host: None,
             system_proxy_allowed: false,
@@ -104,6 +114,8 @@ pub enum OutputMode {
 }
 
 pub struct ProcessRequest {
+    /// Explicit native-only input, bounded by the supervisor. None keeps stdin closed.
+    pub stdin: Option<Vec<u8>>,
     pub program: ProcessProgram,
     pub args: Vec<OsString>,
     pub working_dir: PathBuf,

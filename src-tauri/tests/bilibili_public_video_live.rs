@@ -327,9 +327,7 @@ fn diagnostic_directory() -> Option<PathBuf> {
             .canonicalize()
             .unwrap();
         assert!(
-            directory.starts_with(
-                repo.join(".release/bilibili-diagnostics")
-            ),
+            directory.starts_with(repo.join(".release/bilibili-diagnostics")),
             "diagnostics must be inside the ignored diagnostics directory"
         );
         assert!(directory.is_dir());

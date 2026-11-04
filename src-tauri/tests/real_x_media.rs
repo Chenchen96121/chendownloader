@@ -437,6 +437,7 @@ fn real_x_progressive_transfer_blocks_redirect_before_target_request() {
                 source: inventory.source.clone(),
                 playlist_item: None,
                 instagram_selector: None,
+                tiktok_source: None,
                 x_source: Some(source),
                 bilibili_source: None,
                 video_source: Some(media.formats[0].clone()),
@@ -848,6 +849,7 @@ fn real_x_stream_copy_preserves_container_only_color_range() {
             source: inventory.source.clone(),
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: Some(source),
             bilibili_source: None,
             video_source: media
@@ -1333,6 +1335,7 @@ fn real_x_fmp4_hls_probe_and_download_use_materialized_local_files() {
             source: inventory.source.clone(),
             playlist_item: None,
             instagram_selector: None,
+            tiktok_source: None,
             x_source: Some(source),
             bilibili_source: None,
             video_source: media
@@ -1617,6 +1620,7 @@ fn real_x_original_media_pipeline() {
                         source: inventory.source.clone(),
                         playlist_item: None,
                         instagram_selector: None,
+                        tiktok_source: None,
                         x_source: Some(source),
                         bilibili_source: None,
                         video_source: media

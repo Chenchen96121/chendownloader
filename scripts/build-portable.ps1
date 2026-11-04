@@ -5,6 +5,8 @@ param(
 
     [string]$GalleryDlSourceArchive,
 
+    [string]$TikTokCorePath,
+
     [string]$OutputRoot
 )
 
@@ -182,6 +184,11 @@ $applicationVersion = (Get-Content -LiteralPath (Join-Path $repositoryRoot "pack
 if ($applicationVersion -notmatch '^\d+\.\d+\.\d+$') {
     throw "package.json contains an invalid portable release version."
 }
+if ([version]$applicationVersion -ge [version]'1.1.0') {
+    if ([string]::IsNullOrWhiteSpace($TikTokCorePath) -or -not [IO.Path]::IsPathRooted($TikTokCorePath)) { throw 'TikTokCorePath must point to the separately built TikTok component.' }
+    $tikTokInput=Get-Item -LiteralPath $TikTokCorePath
+    if ($tikTokInput.PSIsContainer -or ($tikTokInput.Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'TikTokCorePath must be a regular executable file.' }
+}
 $releaseName = "chendownloader-$applicationVersion-windows-x64"
 $stagingRoot = Join-Path $resolvedOutputRoot $releaseName
 $zipPath = Join-Path $resolvedOutputRoot "$releaseName.zip"
@@ -233,7 +240,7 @@ try {
         }
     }
 
-    Invoke-Checked -Program "node" -Arguments @("scripts/portable-package.mjs", "stage", "--app", $applicationPath, "--vendor", $resolvedVendorRoot, "--gallery-dl-source", $resolvedGalleryDlSourceArchive, "--output", $stagingRoot)
+    Invoke-Checked -Program "node" -Arguments @("scripts/portable-package.mjs", "stage", "--app", $applicationPath, "--vendor", $resolvedVendorRoot, "--gallery-dl-source", $resolvedGalleryDlSourceArchive, "--output", $stagingRoot, "--tiktok-core", $TikTokCorePath)
     New-DeterministicZip -SourceDirectory $stagingRoot -DestinationZip $zipPath
 
     $auditRoot = Join-Path $resolvedOutputRoot ".audit-$([Guid]::NewGuid().ToString('N'))"

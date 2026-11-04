@@ -230,6 +230,7 @@ where
             }
             let result = self.process.run(
                 ProcessRequest {
+                    stdin: None,
                     program,
                     args,
                     working_dir,

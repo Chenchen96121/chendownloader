@@ -127,6 +127,7 @@ pub(super) fn hydrate<R: ManagedToolResolver, P: ProcessSupervisor>(
             let exit = process
                 .run(
                     ProcessRequest {
+                        stdin: None,
                         program: ProcessProgram::from_resolved_tool(tool)
                             .with_network_profile(context.network()),
                         args,

@@ -62,6 +62,19 @@ impl<V: DestinationValidator> DestinationRegistry<V> {
     ) -> Result<DestinationApproval, DownloadErrorCode> {
         let path = self.validator.validate(&path)?;
         let display_name = self.validator.display_name(&path);
+        let mut session = self
+            .session
+            .lock()
+            .map_err(|_| DownloadErrorCode::DestinationUnavailable)?;
+        if let Some(current) = session.as_ref().filter(|current| {
+            current.path == path
+                && now.saturating_duration_since(current.created_at) < DESTINATION_LIFETIME
+        }) {
+            // Workspaces share one saved folder. Revalidating it must not revoke
+            // another platform's token, or extend that token's original lifetime.
+            return DestinationApproval::new(current.destination_id.clone(), display_name)
+                .map_err(|_| DownloadErrorCode::DestinationUnavailable);
+        }
         let id = self
             .next_id
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
@@ -70,10 +83,6 @@ impl<V: DestinationValidator> DestinationRegistry<V> {
             .map_err(|_| DownloadErrorCode::Unknown)?
             .to_string();
         let approval = DestinationApproval::new(id.clone(), display_name)
-            .map_err(|_| DownloadErrorCode::DestinationUnavailable)?;
-        let mut session = self
-            .session
-            .lock()
             .map_err(|_| DownloadErrorCode::DestinationUnavailable)?;
         *session = Some(DestinationSession {
             destination_id: id,

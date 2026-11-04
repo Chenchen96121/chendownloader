@@ -2,14 +2,15 @@ import type { ReactNode } from "react";
 import { catalogs } from "../shared/i18n/catalog";
 import type { Locale } from "../shared/i18n/locale";
 import { Icon } from "../shared/ui/Icon";
-export type DesktopRoute = "youtube" | "instagram" | "x" | "bilibili" | "history" | "settings";
-const platformRoutes = ["youtube", "instagram", "x", "bilibili"] as const;
-export function DesktopShell({ locale, route, onNavigate, youtubeWorkspace, instagramWorkspace, xWorkspace, bilibiliWorkspace, settings, downloads }: {
+export type DesktopRoute = "youtube" | "instagram" | "tiktok" | "x" | "bilibili" | "history" | "settings";
+const platformRoutes = ["youtube", "instagram", "tiktok", "x", "bilibili"] as const;
+export function DesktopShell({ locale, route, onNavigate, youtubeWorkspace, instagramWorkspace, tiktokWorkspace, xWorkspace, bilibiliWorkspace, settings, downloads }: {
   locale: Locale;
   route: DesktopRoute;
   onNavigate: (route: DesktopRoute) => void;
   youtubeWorkspace: ReactNode;
   instagramWorkspace: ReactNode;
+  tiktokWorkspace?: ReactNode;
   xWorkspace: ReactNode;
   bilibiliWorkspace: ReactNode;
   settings: ReactNode;
@@ -33,6 +34,7 @@ export function DesktopShell({ locale, route, onNavigate, youtubeWorkspace, inst
     <div className="desktop-content">
       <div className="workspace-route youtube-route" hidden={route !== "youtube"}>{youtubeWorkspace}</div>
       <div className="workspace-route instagram-route" hidden={route !== "instagram"}>{instagramWorkspace}</div>
+      <div className="workspace-route tiktok-route" hidden={route !== "tiktok"}>{tiktokWorkspace}</div>
       <div className="workspace-route x-route" hidden={route !== "x"}>{xWorkspace}</div>
       <div className="workspace-route bilibili-route" hidden={route !== "bilibili"}>{bilibiliWorkspace}</div>
       <div className="settings-route" hidden={route !== "settings"}><h2 className="page-title">{copy.settingsTitle}</h2>{settings}</div>
